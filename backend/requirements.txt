@@ -1,10 +1,9 @@
 fastapi
-uvicorn
+uvicorn[standard]
+gunicorn
 sqlalchemy
 aiosqlite
-aiomysql
-aioodbc
-pyodbc
+asyncpg
 cryptography
 python-jose[cryptography]
 bcrypt

@@ -582,3 +582,35 @@ WHERE recipients.campaign_id = ?
 2025-12-08 11:06:43,046 INFO sqlalchemy.engine.Engine [cached since 450.6s ago] (3, 100, 0)
 INFO:     127.0.0.1:50275 - "GET /api/v1/campaigns/3/details HTTP/1.1" 200 OK
 2025-12-08 11:06:43,047 INFO sqlalchemy.engine.Engine ROLLBACK
+WARNING:  StatReload detected changes in 'app/core/config.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2739]
+INFO:     Started server process [3785]
+INFO:     Waiting for application startup.
+2025-12-08 11:31:54,103 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-12-08 11:31:54,104 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("users")
+2025-12-08 11:31:54,104 INFO sqlalchemy.engine.Engine [raw sql] ()
+2025-12-08 11:31:54,105 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("smtp_configs")
+2025-12-08 11:31:54,105 INFO sqlalchemy.engine.Engine [raw sql] ()
+2025-12-08 11:31:54,106 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("campaigns")
+2025-12-08 11:31:54,106 INFO sqlalchemy.engine.Engine [raw sql] ()
+2025-12-08 11:31:54,107 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("templates")
+2025-12-08 11:31:54,107 INFO sqlalchemy.engine.Engine [raw sql] ()
+2025-12-08 11:31:54,107 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("recipients")
+2025-12-08 11:31:54,107 INFO sqlalchemy.engine.Engine [raw sql] ()
+2025-12-08 11:31:54,108 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("otps")
+2025-12-08 11:31:54,108 INFO sqlalchemy.engine.Engine [raw sql] ()
+2025-12-08 11:31:54,109 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("attachments")
+2025-12-08 11:31:54,109 INFO sqlalchemy.engine.Engine [raw sql] ()
+2025-12-08 11:31:54,109 INFO sqlalchemy.engine.Engine COMMIT
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/core/database.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [3785]
+INFO:     Started server process [3797]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
