@@ -1,0 +1,584 @@
+INFO:     Will watch for changes in these directories: ['/Volumes/Harsh Techno/nova-mailer-main/backend']
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [2667] using StatReload
+INFO:     Started server process [2739]
+INFO:     Waiting for application startup.
+2025-12-08 10:56:16,300 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-12-08 10:56:16,300 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("users")
+2025-12-08 10:56:16,300 INFO sqlalchemy.engine.Engine [raw sql] ()
+2025-12-08 10:56:16,304 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("smtp_configs")
+2025-12-08 10:56:16,304 INFO sqlalchemy.engine.Engine [raw sql] ()
+2025-12-08 10:56:16,306 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("campaigns")
+2025-12-08 10:56:16,306 INFO sqlalchemy.engine.Engine [raw sql] ()
+2025-12-08 10:56:16,307 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("templates")
+2025-12-08 10:56:16,307 INFO sqlalchemy.engine.Engine [raw sql] ()
+2025-12-08 10:56:16,322 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("recipients")
+2025-12-08 10:56:16,322 INFO sqlalchemy.engine.Engine [raw sql] ()
+2025-12-08 10:56:16,324 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("otps")
+2025-12-08 10:56:16,324 INFO sqlalchemy.engine.Engine [raw sql] ()
+2025-12-08 10:56:16,325 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("attachments")
+2025-12-08 10:56:16,325 INFO sqlalchemy.engine.Engine [raw sql] ()
+2025-12-08 10:56:16,326 INFO sqlalchemy.engine.Engine COMMIT
+INFO:     Application startup complete.
+INFO:     127.0.0.1:49774 - "OPTIONS /api/v1/auth/login HTTP/1.1" 200 OK
+2025-12-08 10:56:45,819 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-12-08 10:56:45,842 INFO sqlalchemy.engine.Engine SELECT users.id, users.email, users.hashed_password, users.is_active, users.full_name, users.email_verified, users.two_factor_enabled 
+FROM users 
+WHERE users.email = ?
+2025-12-08 10:56:45,843 INFO sqlalchemy.engine.Engine [generated in 0.00023s] ('harsh@test.in',)
+INFO:     127.0.0.1:49774 - "POST /api/v1/auth/login HTTP/1.1" 200 OK
+2025-12-08 10:56:46,097 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:49774 - "OPTIONS /api/v1/stats/dashboard HTTP/1.1" 200 OK
+2025-12-08 10:56:47,550 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-12-08 10:56:47,550 INFO sqlalchemy.engine.Engine SELECT users.id, users.email, users.hashed_password, users.is_active, users.full_name, users.email_verified, users.two_factor_enabled 
+FROM users 
+WHERE users.email = ?
+2025-12-08 10:56:47,551 INFO sqlalchemy.engine.Engine [cached since 1.708s ago] ('harsh@test.in',)
+2025-12-08 10:56:47,554 INFO sqlalchemy.engine.Engine SELECT count(campaigns.id) AS count_1 
+FROM campaigns 
+WHERE campaigns.user_id = ?
+2025-12-08 10:56:47,554 INFO sqlalchemy.engine.Engine [generated in 0.00022s] (1,)
+2025-12-08 10:56:47,557 INFO sqlalchemy.engine.Engine SELECT campaigns.status, count(campaigns.id) AS count_1 
+FROM campaigns 
+WHERE campaigns.user_id = ? GROUP BY campaigns.status
+2025-12-08 10:56:47,557 INFO sqlalchemy.engine.Engine [generated in 0.00030s] (1,)
+2025-12-08 10:56:47,561 INFO sqlalchemy.engine.Engine SELECT campaigns.id 
+FROM campaigns 
+WHERE campaigns.user_id = ?
+2025-12-08 10:56:47,561 INFO sqlalchemy.engine.Engine [generated in 0.00022s] (1,)
+2025-12-08 10:56:47,566 INFO sqlalchemy.engine.Engine SELECT count(recipients.id) AS total, sum(CASE WHEN (recipients.status = ?) THEN ? ELSE ? END) AS sent, sum(CASE WHEN (recipients.status = ?) THEN ? ELSE ? END) AS failed, sum(CASE WHEN (recipients.status = ?) THEN ? ELSE ? END) AS pending 
+FROM recipients 
+WHERE recipients.campaign_id IN (?, ?, ?)
+2025-12-08 10:56:47,566 INFO sqlalchemy.engine.Engine [generated in 0.00036s] ('sent', 1, 0, 'failed', 1, 0, 'pending', 1, 0, 1, 2, 3)
+2025-12-08 10:56:47,570 INFO sqlalchemy.engine.Engine SELECT campaigns.id, campaigns.name, campaigns.subject, campaigns.body, campaigns.created_at, campaigns.status, campaigns.user_id 
+FROM campaigns 
+WHERE campaigns.user_id = ? ORDER BY campaigns.created_at DESC
+ LIMIT ? OFFSET ?
+2025-12-08 10:56:47,570 INFO sqlalchemy.engine.Engine [generated in 0.00024s] (1, 5, 0)
+INFO:     127.0.0.1:49774 - "GET /api/v1/stats/dashboard HTTP/1.1" 200 OK
+2025-12-08 10:56:47,573 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:49786 - "OPTIONS /api/v1/smtp HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49786 - "GET /api/v1/smtp HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:49787 - "OPTIONS /api/v1/smtp/ HTTP/1.1" 200 OK
+2025-12-08 10:56:55,371 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-12-08 10:56:55,371 INFO sqlalchemy.engine.Engine SELECT users.id, users.email, users.hashed_password, users.is_active, users.full_name, users.email_verified, users.two_factor_enabled 
+FROM users 
+WHERE users.email = ?
+2025-12-08 10:56:55,371 INFO sqlalchemy.engine.Engine [cached since 9.529s ago] ('harsh@test.in',)
+2025-12-08 10:56:55,374 INFO sqlalchemy.engine.Engine SELECT smtp_configs.id, smtp_configs.host, smtp_configs.port, smtp_configs.username, smtp_configs.password, smtp_configs.from_email, smtp_configs.user_id 
+FROM smtp_configs 
+WHERE smtp_configs.user_id = ?
+2025-12-08 10:56:55,374 INFO sqlalchemy.engine.Engine [generated in 0.00018s] (1,)
+INFO:     127.0.0.1:49787 - "GET /api/v1/smtp/ HTTP/1.1" 200 OK
+2025-12-08 10:56:55,378 INFO sqlalchemy.engine.Engine ROLLBACK
+2025-12-08 10:58:48,450 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-12-08 10:58:48,451 INFO sqlalchemy.engine.Engine SELECT users.id, users.email, users.hashed_password, users.is_active, users.full_name, users.email_verified, users.two_factor_enabled 
+FROM users 
+WHERE users.email = ?
+2025-12-08 10:58:48,451 INFO sqlalchemy.engine.Engine [cached since 122.6s ago] ('harsh@test.in',)
+2025-12-08 10:58:48,453 INFO sqlalchemy.engine.Engine SELECT count(campaigns.id) AS count_1 
+FROM campaigns 
+WHERE campaigns.user_id = ?
+2025-12-08 10:58:48,453 INFO sqlalchemy.engine.Engine [cached since 120.9s ago] (1,)
+2025-12-08 10:58:48,454 INFO sqlalchemy.engine.Engine SELECT campaigns.status, count(campaigns.id) AS count_1 
+FROM campaigns 
+WHERE campaigns.user_id = ? GROUP BY campaigns.status
+2025-12-08 10:58:48,454 INFO sqlalchemy.engine.Engine [cached since 120.9s ago] (1,)
+2025-12-08 10:58:48,455 INFO sqlalchemy.engine.Engine SELECT campaigns.id 
+FROM campaigns 
+WHERE campaigns.user_id = ?
+2025-12-08 10:58:48,455 INFO sqlalchemy.engine.Engine [cached since 120.9s ago] (1,)
+2025-12-08 10:58:48,457 INFO sqlalchemy.engine.Engine SELECT count(recipients.id) AS total, sum(CASE WHEN (recipients.status = ?) THEN ? ELSE ? END) AS sent, sum(CASE WHEN (recipients.status = ?) THEN ? ELSE ? END) AS failed, sum(CASE WHEN (recipients.status = ?) THEN ? ELSE ? END) AS pending 
+FROM recipients 
+WHERE recipients.campaign_id IN (?, ?, ?)
+2025-12-08 10:58:48,457 INFO sqlalchemy.engine.Engine [cached since 120.9s ago] ('sent', 1, 0, 'failed', 1, 0, 'pending', 1, 0, 1, 2, 3)
+2025-12-08 10:58:48,458 INFO sqlalchemy.engine.Engine SELECT campaigns.id, campaigns.name, campaigns.subject, campaigns.body, campaigns.created_at, campaigns.status, campaigns.user_id 
+FROM campaigns 
+WHERE campaigns.user_id = ? ORDER BY campaigns.created_at DESC
+ LIMIT ? OFFSET ?
+2025-12-08 10:58:48,458 INFO sqlalchemy.engine.Engine [cached since 120.9s ago] (1, 5, 0)
+INFO:     127.0.0.1:49797 - "GET /api/v1/stats/dashboard HTTP/1.1" 200 OK
+2025-12-08 10:58:48,460 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:49797 - "OPTIONS /api/v1/campaigns HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49797 - "GET /api/v1/campaigns HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:49801 - "OPTIONS /api/v1/campaigns/ HTTP/1.1" 200 OK
+2025-12-08 10:58:52,510 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-12-08 10:58:52,510 INFO sqlalchemy.engine.Engine SELECT users.id, users.email, users.hashed_password, users.is_active, users.full_name, users.email_verified, users.two_factor_enabled 
+FROM users 
+WHERE users.email = ?
+2025-12-08 10:58:52,510 INFO sqlalchemy.engine.Engine [cached since 126.7s ago] ('harsh@test.in',)
+2025-12-08 10:58:52,512 INFO sqlalchemy.engine.Engine SELECT campaigns.id, campaigns.name, campaigns.subject, campaigns.body, campaigns.created_at, campaigns.status, campaigns.user_id 
+FROM campaigns 
+WHERE campaigns.user_id = ?
+ LIMIT ? OFFSET ?
+2025-12-08 10:58:52,512 INFO sqlalchemy.engine.Engine [generated in 0.00021s] (1, 100, 0)
+INFO:     127.0.0.1:49801 - "GET /api/v1/campaigns/ HTTP/1.1" 200 OK
+2025-12-08 10:58:52,517 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:49797 - "OPTIONS /api/v1/templates HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49801 - "GET /api/v1/templates HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:49797 - "OPTIONS /api/v1/templates/ HTTP/1.1" 200 OK
+2025-12-08 10:58:57,296 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-12-08 10:58:57,296 INFO sqlalchemy.engine.Engine SELECT users.id, users.email, users.hashed_password, users.is_active, users.full_name, users.email_verified, users.two_factor_enabled 
+FROM users 
+WHERE users.email = ?
+2025-12-08 10:58:57,297 INFO sqlalchemy.engine.Engine [cached since 131.5s ago] ('harsh@test.in',)
+2025-12-08 10:58:57,302 INFO sqlalchemy.engine.Engine SELECT templates.id, templates.name, templates.content, templates.user_id 
+FROM templates 
+WHERE templates.user_id = ?
+ LIMIT ? OFFSET ?
+2025-12-08 10:58:57,302 INFO sqlalchemy.engine.Engine [generated in 0.00031s] (1, 100, 0)
+INFO:     127.0.0.1:49797 - "GET /api/v1/templates/ HTTP/1.1" 200 OK
+2025-12-08 10:58:57,304 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:49801 - "GET /api/v1/campaigns HTTP/1.1" 307 Temporary Redirect
+2025-12-08 10:59:01,433 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-12-08 10:59:01,434 INFO sqlalchemy.engine.Engine SELECT users.id, users.email, users.hashed_password, users.is_active, users.full_name, users.email_verified, users.two_factor_enabled 
+FROM users 
+WHERE users.email = ?
+2025-12-08 10:59:01,434 INFO sqlalchemy.engine.Engine [cached since 135.6s ago] ('harsh@test.in',)
+2025-12-08 10:59:01,435 INFO sqlalchemy.engine.Engine SELECT campaigns.id, campaigns.name, campaigns.subject, campaigns.body, campaigns.created_at, campaigns.status, campaigns.user_id 
+FROM campaigns 
+WHERE campaigns.user_id = ?
+ LIMIT ? OFFSET ?
+2025-12-08 10:59:01,435 INFO sqlalchemy.engine.Engine [cached since 8.923s ago] (1, 100, 0)
+INFO:     127.0.0.1:49797 - "GET /api/v1/campaigns/ HTTP/1.1" 200 OK
+2025-12-08 10:59:01,437 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:49801 - "GET /api/v1/templates HTTP/1.1" 307 Temporary Redirect
+2025-12-08 10:59:04,446 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-12-08 10:59:04,447 INFO sqlalchemy.engine.Engine SELECT users.id, users.email, users.hashed_password, users.is_active, users.full_name, users.email_verified, users.two_factor_enabled 
+FROM users 
+WHERE users.email = ?
+2025-12-08 10:59:04,447 INFO sqlalchemy.engine.Engine [cached since 138.6s ago] ('harsh@test.in',)
+2025-12-08 10:59:04,450 INFO sqlalchemy.engine.Engine SELECT templates.id, templates.name, templates.content, templates.user_id 
+FROM templates 
+WHERE templates.user_id = ?
+ LIMIT ? OFFSET ?
+2025-12-08 10:59:04,450 INFO sqlalchemy.engine.Engine [cached since 7.149s ago] (1, 100, 0)
+INFO:     127.0.0.1:49797 - "GET /api/v1/templates/ HTTP/1.1" 200 OK
+2025-12-08 10:59:04,453 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:49801 - "GET /api/v1/campaigns HTTP/1.1" 307 Temporary Redirect
+2025-12-08 10:59:06,454 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-12-08 10:59:06,454 INFO sqlalchemy.engine.Engine SELECT users.id, users.email, users.hashed_password, users.is_active, users.full_name, users.email_verified, users.two_factor_enabled 
+FROM users 
+WHERE users.email = ?
+2025-12-08 10:59:06,455 INFO sqlalchemy.engine.Engine [cached since 140.6s ago] ('harsh@test.in',)
+2025-12-08 10:59:06,456 INFO sqlalchemy.engine.Engine SELECT campaigns.id, campaigns.name, campaigns.subject, campaigns.body, campaigns.created_at, campaigns.status, campaigns.user_id 
+FROM campaigns 
+WHERE campaigns.user_id = ?
+ LIMIT ? OFFSET ?
+2025-12-08 10:59:06,456 INFO sqlalchemy.engine.Engine [cached since 13.94s ago] (1, 100, 0)
+INFO:     127.0.0.1:49797 - "GET /api/v1/campaigns/ HTTP/1.1" 200 OK
+2025-12-08 10:59:06,458 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:49809 - "OPTIONS /api/v1/campaigns/2/details HTTP/1.1" 200 OK
+2025-12-08 10:59:12,412 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-12-08 10:59:12,413 INFO sqlalchemy.engine.Engine SELECT users.id, users.email, users.hashed_password, users.is_active, users.full_name, users.email_verified, users.two_factor_enabled 
+FROM users 
+WHERE users.email = ?
+2025-12-08 10:59:12,413 INFO sqlalchemy.engine.Engine [cached since 146.6s ago] ('harsh@test.in',)
+INFO:     127.0.0.1:49810 - "OPTIONS /api/v1/campaigns/2/attachments HTTP/1.1" 200 OK
+2025-12-08 10:59:12,417 INFO sqlalchemy.engine.Engine SELECT campaigns.id, campaigns.name, campaigns.subject, campaigns.body, campaigns.created_at, campaigns.status, campaigns.user_id 
+FROM campaigns 
+WHERE campaigns.id = ? AND campaigns.user_id = ?
+2025-12-08 10:59:12,417 INFO sqlalchemy.engine.Engine [generated in 0.00031s] (2, 1)
+2025-12-08 10:59:12,423 INFO sqlalchemy.engine.Engine SELECT count(recipients.id) AS total, sum(CASE WHEN (recipients.status = ?) THEN ? ELSE ? END) AS sent, sum(CASE WHEN (recipients.status = ?) THEN ? ELSE ? END) AS pending, sum(CASE WHEN (recipients.status = ?) THEN ? ELSE ? END) AS failed 
+FROM recipients 
+WHERE recipients.campaign_id = ?
+2025-12-08 10:59:12,424 INFO sqlalchemy.engine.Engine [generated in 0.00030s] ('sent', 1, 0, 'pending', 1, 0, 'failed', 1, 0, 2)
+2025-12-08 10:59:12,424 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-12-08 10:59:12,424 INFO sqlalchemy.engine.Engine SELECT users.id, users.email, users.hashed_password, users.is_active, users.full_name, users.email_verified, users.two_factor_enabled 
+FROM users 
+WHERE users.email = ?
+2025-12-08 10:59:12,424 INFO sqlalchemy.engine.Engine [cached since 146.6s ago] ('harsh@test.in',)
+2025-12-08 10:59:12,426 INFO sqlalchemy.engine.Engine SELECT recipients.id, recipients.email, recipients.data, recipients.status, recipients.campaign_id 
+FROM recipients 
+WHERE recipients.campaign_id = ?
+ LIMIT ? OFFSET ?
+2025-12-08 10:59:12,426 INFO sqlalchemy.engine.Engine [generated in 0.00016s] (2, 100, 0)
+2025-12-08 10:59:12,427 INFO sqlalchemy.engine.Engine SELECT campaigns.id, campaigns.name, campaigns.subject, campaigns.body, campaigns.created_at, campaigns.status, campaigns.user_id 
+FROM campaigns 
+WHERE campaigns.id = ? AND campaigns.user_id = ?
+2025-12-08 10:59:12,428 INFO sqlalchemy.engine.Engine [cached since 0.01087s ago] (2, 1)
+INFO:     127.0.0.1:49809 - "GET /api/v1/campaigns/2/details HTTP/1.1" 200 OK
+2025-12-08 10:59:12,429 INFO sqlalchemy.engine.Engine ROLLBACK
+2025-12-08 10:59:12,431 INFO sqlalchemy.engine.Engine SELECT attachments.id, attachments.filename, attachments.content_type, attachments.file_data, attachments.file_size, attachments.campaign_id 
+FROM attachments 
+WHERE attachments.campaign_id = ?
+2025-12-08 10:59:12,432 INFO sqlalchemy.engine.Engine [generated in 0.00026s] (2,)
+INFO:     127.0.0.1:49810 - "GET /api/v1/campaigns/2/attachments HTTP/1.1" 200 OK
+2025-12-08 10:59:12,434 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:49812 - "OPTIONS /api/v1/campaigns/2/test-send?test_email=kumarleekesh94@gmail.com HTTP/1.1" 200 OK
+2025-12-08 11:00:02,923 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-12-08 11:00:02,923 INFO sqlalchemy.engine.Engine SELECT users.id, users.email, users.hashed_password, users.is_active, users.full_name, users.email_verified, users.two_factor_enabled 
+FROM users 
+WHERE users.email = ?
+2025-12-08 11:00:02,923 INFO sqlalchemy.engine.Engine [cached since 197.1s ago] ('harsh@test.in',)
+2025-12-08 11:00:02,925 INFO sqlalchemy.engine.Engine SELECT campaigns.id, campaigns.name, campaigns.subject, campaigns.body, campaigns.created_at, campaigns.status, campaigns.user_id 
+FROM campaigns 
+WHERE campaigns.id = ? AND campaigns.user_id = ?
+2025-12-08 11:00:02,925 INFO sqlalchemy.engine.Engine [cached since 50.51s ago] (2, 1)
+2025-12-08 11:00:02,926 INFO sqlalchemy.engine.Engine SELECT smtp_configs.id, smtp_configs.host, smtp_configs.port, smtp_configs.username, smtp_configs.password, smtp_configs.from_email, smtp_configs.user_id 
+FROM smtp_configs 
+WHERE smtp_configs.user_id = ?
+2025-12-08 11:00:02,926 INFO sqlalchemy.engine.Engine [cached since 187.5s ago] (1,)
+📧 Attempting to send email to kumarleekesh94@gmail.com
+   Host: smtp.gmail.com:587
+   Username: harendrakashyap027@gmail.com
+✅ Email sent successfully to kumarleekesh94@gmail.com
+INFO:     127.0.0.1:49812 - "POST /api/v1/campaigns/2/test-send?test_email=kumarleekesh94@gmail.com HTTP/1.1" 200 OK
+2025-12-08 11:00:08,125 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:49956 - "OPTIONS /api/v1/campaigns/2/upload-csv HTTP/1.1" 200 OK
+2025-12-08 11:02:09,774 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-12-08 11:02:09,774 INFO sqlalchemy.engine.Engine SELECT users.id, users.email, users.hashed_password, users.is_active, users.full_name, users.email_verified, users.two_factor_enabled 
+FROM users 
+WHERE users.email = ?
+2025-12-08 11:02:09,775 INFO sqlalchemy.engine.Engine [cached since 323.9s ago] ('harsh@test.in',)
+2025-12-08 11:02:09,778 INFO sqlalchemy.engine.Engine SELECT campaigns.id, campaigns.name, campaigns.subject, campaigns.body, campaigns.created_at, campaigns.status, campaigns.user_id 
+FROM campaigns 
+WHERE campaigns.id = ? AND campaigns.user_id = ?
+2025-12-08 11:02:09,778 INFO sqlalchemy.engine.Engine [cached since 177.4s ago] (2, 1)
+2025-12-08 11:02:09,806 INFO sqlalchemy.engine.Engine INSERT INTO recipients (email, data, status, campaign_id) VALUES (?, ?, ?, ?) RETURNING id
+2025-12-08 11:02:09,807 INFO sqlalchemy.engine.Engine [generated in 0.00040s (insertmanyvalues) 1/4 (ordered; batch not supported)] ('harshvardhan.vision@gmail.com', '{"email": "harshvardhan.vision@gmail.com", "name": "John Doe", "company": "Acme Corp"}', 'pending', 2)
+2025-12-08 11:02:09,809 INFO sqlalchemy.engine.Engine INSERT INTO recipients (email, data, status, campaign_id) VALUES (?, ?, ?, ?) RETURNING id
+2025-12-08 11:02:09,809 INFO sqlalchemy.engine.Engine [insertmanyvalues 2/4 (ordered; batch not supported)] ('harshvardhan02102002@gmail.com', '{"email": "harshvardhan02102002@gmail.com", "name": "Jane Smith", "company": "Tech Inc"}', 'pending', 2)
+2025-12-08 11:02:09,810 INFO sqlalchemy.engine.Engine INSERT INTO recipients (email, data, status, campaign_id) VALUES (?, ?, ?, ?) RETURNING id
+2025-12-08 11:02:09,810 INFO sqlalchemy.engine.Engine [insertmanyvalues 3/4 (ordered; batch not supported)] ('gauravlodhi530@gmail.com', '{"email": "gauravlodhi530@gmail.com", "name": "John Doe", "company": "Acme Corp"}', 'pending', 2)
+2025-12-08 11:02:09,811 INFO sqlalchemy.engine.Engine INSERT INTO recipients (email, data, status, campaign_id) VALUES (?, ?, ?, ?) RETURNING id
+2025-12-08 11:02:09,811 INFO sqlalchemy.engine.Engine [insertmanyvalues 4/4 (ordered; batch not supported)] ('kumarleekesh94@gmail.com', '{"email": "kumarleekesh94@gmail.com", "name": "Leekesh Kumar", "company": "Vision"}', 'pending', 2)
+2025-12-08 11:02:09,813 INFO sqlalchemy.engine.Engine COMMIT
+INFO:     127.0.0.1:49956 - "POST /api/v1/campaigns/2/upload-csv HTTP/1.1" 200 OK
+2025-12-08 11:02:09,823 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-12-08 11:02:09,824 INFO sqlalchemy.engine.Engine SELECT users.id, users.email, users.hashed_password, users.is_active, users.full_name, users.email_verified, users.two_factor_enabled 
+FROM users 
+WHERE users.email = ?
+2025-12-08 11:02:09,824 INFO sqlalchemy.engine.Engine [cached since 324s ago] ('harsh@test.in',)
+2025-12-08 11:02:09,826 INFO sqlalchemy.engine.Engine SELECT campaigns.id, campaigns.name, campaigns.subject, campaigns.body, campaigns.created_at, campaigns.status, campaigns.user_id 
+FROM campaigns 
+WHERE campaigns.id = ? AND campaigns.user_id = ?
+2025-12-08 11:02:09,827 INFO sqlalchemy.engine.Engine [cached since 177.4s ago] (2, 1)
+2025-12-08 11:02:09,830 INFO sqlalchemy.engine.Engine SELECT count(recipients.id) AS total, sum(CASE WHEN (recipients.status = ?) THEN ? ELSE ? END) AS sent, sum(CASE WHEN (recipients.status = ?) THEN ? ELSE ? END) AS pending, sum(CASE WHEN (recipients.status = ?) THEN ? ELSE ? END) AS failed 
+FROM recipients 
+WHERE recipients.campaign_id = ?
+2025-12-08 11:02:09,830 INFO sqlalchemy.engine.Engine [cached since 177.4s ago] ('sent', 1, 0, 'pending', 1, 0, 'failed', 1, 0, 2)
+2025-12-08 11:02:09,832 INFO sqlalchemy.engine.Engine SELECT recipients.id, recipients.email, recipients.data, recipients.status, recipients.campaign_id 
+FROM recipients 
+WHERE recipients.campaign_id = ?
+ LIMIT ? OFFSET ?
+2025-12-08 11:02:09,832 INFO sqlalchemy.engine.Engine [cached since 177.4s ago] (2, 100, 0)
+INFO:     127.0.0.1:49956 - "GET /api/v1/campaigns/2/details HTTP/1.1" 200 OK
+2025-12-08 11:02:09,835 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:49958 - "OPTIONS /api/v1/campaigns/2/send HTTP/1.1" 200 OK
+2025-12-08 11:02:28,653 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-12-08 11:02:28,653 INFO sqlalchemy.engine.Engine SELECT users.id, users.email, users.hashed_password, users.is_active, users.full_name, users.email_verified, users.two_factor_enabled 
+FROM users 
+WHERE users.email = ?
+2025-12-08 11:02:28,653 INFO sqlalchemy.engine.Engine [cached since 342.8s ago] ('harsh@test.in',)
+2025-12-08 11:02:28,654 INFO sqlalchemy.engine.Engine SELECT campaigns.id, campaigns.name, campaigns.subject, campaigns.body, campaigns.created_at, campaigns.status, campaigns.user_id 
+FROM campaigns 
+WHERE campaigns.id = ? AND campaigns.user_id = ?
+2025-12-08 11:02:28,654 INFO sqlalchemy.engine.Engine [cached since 196.2s ago] (2, 1)
+2025-12-08 11:02:28,656 INFO sqlalchemy.engine.Engine SELECT smtp_configs.id, smtp_configs.host, smtp_configs.port, smtp_configs.username, smtp_configs.password, smtp_configs.from_email, smtp_configs.user_id 
+FROM smtp_configs 
+WHERE smtp_configs.user_id = ?
+2025-12-08 11:02:28,656 INFO sqlalchemy.engine.Engine [cached since 333.3s ago] (1,)
+2025-12-08 11:02:28,658 INFO sqlalchemy.engine.Engine SELECT recipients.id, recipients.email, recipients.data, recipients.status, recipients.campaign_id 
+FROM recipients 
+WHERE recipients.campaign_id = ? AND recipients.status = ?
+2025-12-08 11:02:28,658 INFO sqlalchemy.engine.Engine [generated in 0.00015s] (2, 'pending')
+2025-12-08 11:02:28,659 INFO sqlalchemy.engine.Engine SELECT attachments.id, attachments.filename, attachments.content_type, attachments.file_data, attachments.file_size, attachments.campaign_id 
+FROM attachments 
+WHERE attachments.campaign_id = ?
+2025-12-08 11:02:28,659 INFO sqlalchemy.engine.Engine [cached since 196.2s ago] (2,)
+2025-12-08 11:02:28,661 INFO sqlalchemy.engine.Engine UPDATE campaigns SET status=? WHERE campaigns.id = ?
+2025-12-08 11:02:28,662 INFO sqlalchemy.engine.Engine [generated in 0.00016s] ('sending', 2)
+2025-12-08 11:02:28,663 INFO sqlalchemy.engine.Engine COMMIT
+   📎 1 attachment(s) added
+📧 Attempting to send email to harshvardhan.vision@gmail.com
+   Host: smtp.gmail.com:587
+   Username: harendrakashyap027@gmail.com
+✅ Email sent successfully to harshvardhan.vision@gmail.com
+   📎 1 attachment(s) added
+📧 Attempting to send email to harshvardhan02102002@gmail.com
+   Host: smtp.gmail.com:587
+   Username: harendrakashyap027@gmail.com
+✅ Email sent successfully to harshvardhan02102002@gmail.com
+   📎 1 attachment(s) added
+📧 Attempting to send email to gauravlodhi530@gmail.com
+   Host: smtp.gmail.com:587
+   Username: harendrakashyap027@gmail.com
+✅ Email sent successfully to gauravlodhi530@gmail.com
+   📎 1 attachment(s) added
+📧 Attempting to send email to kumarleekesh94@gmail.com
+   Host: smtp.gmail.com:587
+   Username: harendrakashyap027@gmail.com
+✅ Email sent successfully to kumarleekesh94@gmail.com
+2025-12-08 11:02:48,615 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-12-08 11:02:48,615 INFO sqlalchemy.engine.Engine UPDATE campaigns SET status=? WHERE campaigns.id = ?
+2025-12-08 11:02:48,615 INFO sqlalchemy.engine.Engine [cached since 19.95s ago] ('completed', 2)
+2025-12-08 11:02:48,618 INFO sqlalchemy.engine.Engine UPDATE recipients SET status=? WHERE recipients.id = ?
+2025-12-08 11:02:48,618 INFO sqlalchemy.engine.Engine [generated in 0.00026s] [('sent', 13), ('sent', 14), ('sent', 15), ('sent', 16)]
+2025-12-08 11:02:48,619 INFO sqlalchemy.engine.Engine COMMIT
+INFO:     127.0.0.1:49958 - "POST /api/v1/campaigns/2/send HTTP/1.1" 200 OK
+2025-12-08 11:02:48,626 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-12-08 11:02:48,627 INFO sqlalchemy.engine.Engine SELECT users.id, users.email, users.hashed_password, users.is_active, users.full_name, users.email_verified, users.two_factor_enabled 
+FROM users 
+WHERE users.email = ?
+2025-12-08 11:02:48,627 INFO sqlalchemy.engine.Engine [cached since 362.8s ago] ('harsh@test.in',)
+2025-12-08 11:02:48,628 INFO sqlalchemy.engine.Engine SELECT campaigns.id, campaigns.name, campaigns.subject, campaigns.body, campaigns.created_at, campaigns.status, campaigns.user_id 
+FROM campaigns 
+WHERE campaigns.id = ? AND campaigns.user_id = ?
+2025-12-08 11:02:48,628 INFO sqlalchemy.engine.Engine [cached since 216.2s ago] (2, 1)
+2025-12-08 11:02:48,630 INFO sqlalchemy.engine.Engine SELECT count(recipients.id) AS total, sum(CASE WHEN (recipients.status = ?) THEN ? ELSE ? END) AS sent, sum(CASE WHEN (recipients.status = ?) THEN ? ELSE ? END) AS pending, sum(CASE WHEN (recipients.status = ?) THEN ? ELSE ? END) AS failed 
+FROM recipients 
+WHERE recipients.campaign_id = ?
+2025-12-08 11:02:48,630 INFO sqlalchemy.engine.Engine [cached since 216.2s ago] ('sent', 1, 0, 'pending', 1, 0, 'failed', 1, 0, 2)
+2025-12-08 11:02:48,631 INFO sqlalchemy.engine.Engine SELECT recipients.id, recipients.email, recipients.data, recipients.status, recipients.campaign_id 
+FROM recipients 
+WHERE recipients.campaign_id = ?
+ LIMIT ? OFFSET ?
+2025-12-08 11:02:48,631 INFO sqlalchemy.engine.Engine [cached since 216.2s ago] (2, 100, 0)
+INFO:     127.0.0.1:49958 - "GET /api/v1/campaigns/2/details HTTP/1.1" 200 OK
+2025-12-08 11:02:48,633 INFO sqlalchemy.engine.Engine ROLLBACK
+2025-12-08 11:04:53,171 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-12-08 11:04:53,171 INFO sqlalchemy.engine.Engine SELECT users.id, users.email, users.hashed_password, users.is_active, users.full_name, users.email_verified, users.two_factor_enabled 
+FROM users 
+WHERE users.email = ?
+2025-12-08 11:04:53,171 INFO sqlalchemy.engine.Engine [cached since 487.3s ago] ('harsh@test.in',)
+2025-12-08 11:04:53,173 INFO sqlalchemy.engine.Engine SELECT campaigns.id, campaigns.name, campaigns.subject, campaigns.body, campaigns.created_at, campaigns.status, campaigns.user_id 
+FROM campaigns 
+WHERE campaigns.id = ? AND campaigns.user_id = ?
+2025-12-08 11:04:53,173 INFO sqlalchemy.engine.Engine [cached since 340.8s ago] (2, 1)
+2025-12-08 11:04:53,178 INFO sqlalchemy.engine.Engine INSERT INTO recipients (email, data, status, campaign_id) VALUES (?, ?, ?, ?)
+2025-12-08 11:04:53,179 INFO sqlalchemy.engine.Engine [generated in 0.00078s] ('golapankaj75@gmail.com', '{"email": "golapankaj75@gmail.com", "name": "Pankaj Gola", "company": "Info tech"}', 'pending', 2)
+2025-12-08 11:04:53,181 INFO sqlalchemy.engine.Engine COMMIT
+INFO:     127.0.0.1:50245 - "POST /api/v1/campaigns/2/upload-csv HTTP/1.1" 200 OK
+2025-12-08 11:04:53,192 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-12-08 11:04:53,193 INFO sqlalchemy.engine.Engine SELECT users.id, users.email, users.hashed_password, users.is_active, users.full_name, users.email_verified, users.two_factor_enabled 
+FROM users 
+WHERE users.email = ?
+2025-12-08 11:04:53,193 INFO sqlalchemy.engine.Engine [cached since 487.3s ago] ('harsh@test.in',)
+2025-12-08 11:04:53,195 INFO sqlalchemy.engine.Engine SELECT campaigns.id, campaigns.name, campaigns.subject, campaigns.body, campaigns.created_at, campaigns.status, campaigns.user_id 
+FROM campaigns 
+WHERE campaigns.id = ? AND campaigns.user_id = ?
+2025-12-08 11:04:53,195 INFO sqlalchemy.engine.Engine [cached since 340.8s ago] (2, 1)
+2025-12-08 11:04:53,197 INFO sqlalchemy.engine.Engine SELECT count(recipients.id) AS total, sum(CASE WHEN (recipients.status = ?) THEN ? ELSE ? END) AS sent, sum(CASE WHEN (recipients.status = ?) THEN ? ELSE ? END) AS pending, sum(CASE WHEN (recipients.status = ?) THEN ? ELSE ? END) AS failed 
+FROM recipients 
+WHERE recipients.campaign_id = ?
+2025-12-08 11:04:53,197 INFO sqlalchemy.engine.Engine [cached since 340.8s ago] ('sent', 1, 0, 'pending', 1, 0, 'failed', 1, 0, 2)
+2025-12-08 11:04:53,199 INFO sqlalchemy.engine.Engine SELECT recipients.id, recipients.email, recipients.data, recipients.status, recipients.campaign_id 
+FROM recipients 
+WHERE recipients.campaign_id = ?
+ LIMIT ? OFFSET ?
+2025-12-08 11:04:53,199 INFO sqlalchemy.engine.Engine [cached since 340.8s ago] (2, 100, 0)
+INFO:     127.0.0.1:50245 - "GET /api/v1/campaigns/2/details HTTP/1.1" 200 OK
+2025-12-08 11:04:53,201 INFO sqlalchemy.engine.Engine ROLLBACK
+2025-12-08 11:04:58,813 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-12-08 11:04:58,814 INFO sqlalchemy.engine.Engine SELECT users.id, users.email, users.hashed_password, users.is_active, users.full_name, users.email_verified, users.two_factor_enabled 
+FROM users 
+WHERE users.email = ?
+2025-12-08 11:04:58,814 INFO sqlalchemy.engine.Engine [cached since 493s ago] ('harsh@test.in',)
+2025-12-08 11:04:58,815 INFO sqlalchemy.engine.Engine SELECT campaigns.id, campaigns.name, campaigns.subject, campaigns.body, campaigns.created_at, campaigns.status, campaigns.user_id 
+FROM campaigns 
+WHERE campaigns.id = ? AND campaigns.user_id = ?
+2025-12-08 11:04:58,815 INFO sqlalchemy.engine.Engine [cached since 346.4s ago] (2, 1)
+2025-12-08 11:04:58,816 INFO sqlalchemy.engine.Engine SELECT smtp_configs.id, smtp_configs.host, smtp_configs.port, smtp_configs.username, smtp_configs.password, smtp_configs.from_email, smtp_configs.user_id 
+FROM smtp_configs 
+WHERE smtp_configs.user_id = ?
+2025-12-08 11:04:58,816 INFO sqlalchemy.engine.Engine [cached since 483.4s ago] (1,)
+2025-12-08 11:04:58,817 INFO sqlalchemy.engine.Engine SELECT recipients.id, recipients.email, recipients.data, recipients.status, recipients.campaign_id 
+FROM recipients 
+WHERE recipients.campaign_id = ? AND recipients.status = ?
+2025-12-08 11:04:58,818 INFO sqlalchemy.engine.Engine [cached since 150.2s ago] (2, 'pending')
+2025-12-08 11:04:58,819 INFO sqlalchemy.engine.Engine SELECT attachments.id, attachments.filename, attachments.content_type, attachments.file_data, attachments.file_size, attachments.campaign_id 
+FROM attachments 
+WHERE attachments.campaign_id = ?
+2025-12-08 11:04:58,819 INFO sqlalchemy.engine.Engine [cached since 346.4s ago] (2,)
+2025-12-08 11:04:58,821 INFO sqlalchemy.engine.Engine UPDATE campaigns SET status=? WHERE campaigns.id = ?
+2025-12-08 11:04:58,821 INFO sqlalchemy.engine.Engine [cached since 150.2s ago] ('sending', 2)
+2025-12-08 11:04:58,822 INFO sqlalchemy.engine.Engine COMMIT
+   📎 1 attachment(s) added
+📧 Attempting to send email to golapankaj75@gmail.com
+   Host: smtp.gmail.com:587
+   Username: harendrakashyap027@gmail.com
+✅ Email sent successfully to golapankaj75@gmail.com
+2025-12-08 11:05:09,218 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-12-08 11:05:09,218 INFO sqlalchemy.engine.Engine UPDATE campaigns SET status=? WHERE campaigns.id = ?
+2025-12-08 11:05:09,218 INFO sqlalchemy.engine.Engine [cached since 160.6s ago] ('completed', 2)
+2025-12-08 11:05:09,220 INFO sqlalchemy.engine.Engine UPDATE recipients SET status=? WHERE recipients.id = ?
+2025-12-08 11:05:09,220 INFO sqlalchemy.engine.Engine [generated in 0.00017s] ('sent', 17)
+2025-12-08 11:05:09,221 INFO sqlalchemy.engine.Engine COMMIT
+INFO:     127.0.0.1:50247 - "POST /api/v1/campaigns/2/send HTTP/1.1" 200 OK
+2025-12-08 11:05:09,228 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-12-08 11:05:09,228 INFO sqlalchemy.engine.Engine SELECT users.id, users.email, users.hashed_password, users.is_active, users.full_name, users.email_verified, users.two_factor_enabled 
+FROM users 
+WHERE users.email = ?
+2025-12-08 11:05:09,228 INFO sqlalchemy.engine.Engine [cached since 503.4s ago] ('harsh@test.in',)
+2025-12-08 11:05:09,229 INFO sqlalchemy.engine.Engine SELECT campaigns.id, campaigns.name, campaigns.subject, campaigns.body, campaigns.created_at, campaigns.status, campaigns.user_id 
+FROM campaigns 
+WHERE campaigns.id = ? AND campaigns.user_id = ?
+2025-12-08 11:05:09,230 INFO sqlalchemy.engine.Engine [cached since 356.8s ago] (2, 1)
+2025-12-08 11:05:09,231 INFO sqlalchemy.engine.Engine SELECT count(recipients.id) AS total, sum(CASE WHEN (recipients.status = ?) THEN ? ELSE ? END) AS sent, sum(CASE WHEN (recipients.status = ?) THEN ? ELSE ? END) AS pending, sum(CASE WHEN (recipients.status = ?) THEN ? ELSE ? END) AS failed 
+FROM recipients 
+WHERE recipients.campaign_id = ?
+2025-12-08 11:05:09,231 INFO sqlalchemy.engine.Engine [cached since 356.8s ago] ('sent', 1, 0, 'pending', 1, 0, 'failed', 1, 0, 2)
+2025-12-08 11:05:09,233 INFO sqlalchemy.engine.Engine SELECT recipients.id, recipients.email, recipients.data, recipients.status, recipients.campaign_id 
+FROM recipients 
+WHERE recipients.campaign_id = ?
+ LIMIT ? OFFSET ?
+2025-12-08 11:05:09,233 INFO sqlalchemy.engine.Engine [cached since 356.8s ago] (2, 100, 0)
+INFO:     127.0.0.1:50247 - "GET /api/v1/campaigns/2/details HTTP/1.1" 200 OK
+2025-12-08 11:05:09,235 INFO sqlalchemy.engine.Engine ROLLBACK
+2025-12-08 11:05:13,557 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-12-08 11:05:13,558 INFO sqlalchemy.engine.Engine SELECT users.id, users.email, users.hashed_password, users.is_active, users.full_name, users.email_verified, users.two_factor_enabled 
+FROM users 
+WHERE users.email = ?
+2025-12-08 11:05:13,558 INFO sqlalchemy.engine.Engine [cached since 507.7s ago] ('harsh@test.in',)
+2025-12-08 11:05:13,561 INFO sqlalchemy.engine.Engine SELECT count(campaigns.id) AS count_1 
+FROM campaigns 
+WHERE campaigns.user_id = ?
+2025-12-08 11:05:13,561 INFO sqlalchemy.engine.Engine [cached since 506s ago] (1,)
+2025-12-08 11:05:13,565 INFO sqlalchemy.engine.Engine SELECT campaigns.status, count(campaigns.id) AS count_1 
+FROM campaigns 
+WHERE campaigns.user_id = ? GROUP BY campaigns.status
+2025-12-08 11:05:13,566 INFO sqlalchemy.engine.Engine [cached since 506s ago] (1,)
+2025-12-08 11:05:13,567 INFO sqlalchemy.engine.Engine SELECT campaigns.id 
+FROM campaigns 
+WHERE campaigns.user_id = ?
+2025-12-08 11:05:13,567 INFO sqlalchemy.engine.Engine [cached since 506s ago] (1,)
+2025-12-08 11:05:13,570 INFO sqlalchemy.engine.Engine SELECT count(recipients.id) AS total, sum(CASE WHEN (recipients.status = ?) THEN ? ELSE ? END) AS sent, sum(CASE WHEN (recipients.status = ?) THEN ? ELSE ? END) AS failed, sum(CASE WHEN (recipients.status = ?) THEN ? ELSE ? END) AS pending 
+FROM recipients 
+WHERE recipients.campaign_id IN (?, ?, ?)
+2025-12-08 11:05:13,570 INFO sqlalchemy.engine.Engine [cached since 506s ago] ('sent', 1, 0, 'failed', 1, 0, 'pending', 1, 0, 1, 2, 3)
+2025-12-08 11:05:13,572 INFO sqlalchemy.engine.Engine SELECT campaigns.id, campaigns.name, campaigns.subject, campaigns.body, campaigns.created_at, campaigns.status, campaigns.user_id 
+FROM campaigns 
+WHERE campaigns.user_id = ? ORDER BY campaigns.created_at DESC
+ LIMIT ? OFFSET ?
+2025-12-08 11:05:13,572 INFO sqlalchemy.engine.Engine [cached since 506s ago] (1, 5, 0)
+INFO:     127.0.0.1:50247 - "GET /api/v1/stats/dashboard HTTP/1.1" 200 OK
+2025-12-08 11:05:13,574 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:50272 - "OPTIONS /api/v1/campaigns/3/details HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50273 - "OPTIONS /api/v1/campaigns/3/attachments HTTP/1.1" 200 OK
+2025-12-08 11:06:24,825 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-12-08 11:06:24,826 INFO sqlalchemy.engine.Engine SELECT users.id, users.email, users.hashed_password, users.is_active, users.full_name, users.email_verified, users.two_factor_enabled 
+FROM users 
+WHERE users.email = ?
+2025-12-08 11:06:24,826 INFO sqlalchemy.engine.Engine [cached since 579s ago] ('harsh@test.in',)
+2025-12-08 11:06:24,827 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-12-08 11:06:24,828 INFO sqlalchemy.engine.Engine SELECT users.id, users.email, users.hashed_password, users.is_active, users.full_name, users.email_verified, users.two_factor_enabled 
+FROM users 
+WHERE users.email = ?
+2025-12-08 11:06:24,828 INFO sqlalchemy.engine.Engine [cached since 579s ago] ('harsh@test.in',)
+2025-12-08 11:06:24,829 INFO sqlalchemy.engine.Engine SELECT campaigns.id, campaigns.name, campaigns.subject, campaigns.body, campaigns.created_at, campaigns.status, campaigns.user_id 
+FROM campaigns 
+WHERE campaigns.id = ? AND campaigns.user_id = ?
+2025-12-08 11:06:24,829 INFO sqlalchemy.engine.Engine [cached since 432.4s ago] (3, 1)
+2025-12-08 11:06:24,830 INFO sqlalchemy.engine.Engine SELECT campaigns.id, campaigns.name, campaigns.subject, campaigns.body, campaigns.created_at, campaigns.status, campaigns.user_id 
+FROM campaigns 
+WHERE campaigns.id = ? AND campaigns.user_id = ?
+2025-12-08 11:06:24,831 INFO sqlalchemy.engine.Engine [cached since 432.4s ago] (3, 1)
+2025-12-08 11:06:24,833 INFO sqlalchemy.engine.Engine SELECT count(recipients.id) AS total, sum(CASE WHEN (recipients.status = ?) THEN ? ELSE ? END) AS sent, sum(CASE WHEN (recipients.status = ?) THEN ? ELSE ? END) AS pending, sum(CASE WHEN (recipients.status = ?) THEN ? ELSE ? END) AS failed 
+FROM recipients 
+WHERE recipients.campaign_id = ?
+2025-12-08 11:06:24,833 INFO sqlalchemy.engine.Engine [cached since 432.4s ago] ('sent', 1, 0, 'pending', 1, 0, 'failed', 1, 0, 3)
+2025-12-08 11:06:24,834 INFO sqlalchemy.engine.Engine SELECT attachments.id, attachments.filename, attachments.content_type, attachments.file_data, attachments.file_size, attachments.campaign_id 
+FROM attachments 
+WHERE attachments.campaign_id = ?
+2025-12-08 11:06:24,835 INFO sqlalchemy.engine.Engine [cached since 432.4s ago] (3,)
+2025-12-08 11:06:24,836 INFO sqlalchemy.engine.Engine SELECT recipients.id, recipients.email, recipients.data, recipients.status, recipients.campaign_id 
+FROM recipients 
+WHERE recipients.campaign_id = ?
+ LIMIT ? OFFSET ?
+2025-12-08 11:06:24,836 INFO sqlalchemy.engine.Engine [cached since 432.4s ago] (3, 100, 0)
+INFO:     127.0.0.1:50273 - "GET /api/v1/campaigns/3/attachments HTTP/1.1" 200 OK
+2025-12-08 11:06:24,837 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:50272 - "GET /api/v1/campaigns/3/details HTTP/1.1" 200 OK
+2025-12-08 11:06:24,838 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:50275 - "OPTIONS /api/v1/campaigns/3/upload-csv HTTP/1.1" 200 OK
+2025-12-08 11:06:34,116 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-12-08 11:06:34,116 INFO sqlalchemy.engine.Engine SELECT users.id, users.email, users.hashed_password, users.is_active, users.full_name, users.email_verified, users.two_factor_enabled 
+FROM users 
+WHERE users.email = ?
+2025-12-08 11:06:34,116 INFO sqlalchemy.engine.Engine [cached since 588.3s ago] ('harsh@test.in',)
+2025-12-08 11:06:34,119 INFO sqlalchemy.engine.Engine SELECT campaigns.id, campaigns.name, campaigns.subject, campaigns.body, campaigns.created_at, campaigns.status, campaigns.user_id 
+FROM campaigns 
+WHERE campaigns.id = ? AND campaigns.user_id = ?
+2025-12-08 11:06:34,119 INFO sqlalchemy.engine.Engine [cached since 441.7s ago] (3, 1)
+2025-12-08 11:06:34,123 INFO sqlalchemy.engine.Engine INSERT INTO recipients (email, data, status, campaign_id) VALUES (?, ?, ?, ?)
+2025-12-08 11:06:34,123 INFO sqlalchemy.engine.Engine [cached since 100.9s ago] ('golapankaj75@gmail.com', '{"email": "golapankaj75@gmail.com", "name": "Pankaj Gola", "company": "Info tech"}', 'pending', 3)
+2025-12-08 11:06:34,124 INFO sqlalchemy.engine.Engine COMMIT
+INFO:     127.0.0.1:50275 - "POST /api/v1/campaigns/3/upload-csv HTTP/1.1" 200 OK
+2025-12-08 11:06:34,135 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-12-08 11:06:34,136 INFO sqlalchemy.engine.Engine SELECT users.id, users.email, users.hashed_password, users.is_active, users.full_name, users.email_verified, users.two_factor_enabled 
+FROM users 
+WHERE users.email = ?
+2025-12-08 11:06:34,136 INFO sqlalchemy.engine.Engine [cached since 588.3s ago] ('harsh@test.in',)
+2025-12-08 11:06:34,138 INFO sqlalchemy.engine.Engine SELECT campaigns.id, campaigns.name, campaigns.subject, campaigns.body, campaigns.created_at, campaigns.status, campaigns.user_id 
+FROM campaigns 
+WHERE campaigns.id = ? AND campaigns.user_id = ?
+2025-12-08 11:06:34,138 INFO sqlalchemy.engine.Engine [cached since 441.7s ago] (3, 1)
+2025-12-08 11:06:34,142 INFO sqlalchemy.engine.Engine SELECT count(recipients.id) AS total, sum(CASE WHEN (recipients.status = ?) THEN ? ELSE ? END) AS sent, sum(CASE WHEN (recipients.status = ?) THEN ? ELSE ? END) AS pending, sum(CASE WHEN (recipients.status = ?) THEN ? ELSE ? END) AS failed 
+FROM recipients 
+WHERE recipients.campaign_id = ?
+2025-12-08 11:06:34,143 INFO sqlalchemy.engine.Engine [cached since 441.7s ago] ('sent', 1, 0, 'pending', 1, 0, 'failed', 1, 0, 3)
+2025-12-08 11:06:34,144 INFO sqlalchemy.engine.Engine SELECT recipients.id, recipients.email, recipients.data, recipients.status, recipients.campaign_id 
+FROM recipients 
+WHERE recipients.campaign_id = ?
+ LIMIT ? OFFSET ?
+2025-12-08 11:06:34,144 INFO sqlalchemy.engine.Engine [cached since 441.7s ago] (3, 100, 0)
+INFO:     127.0.0.1:50275 - "GET /api/v1/campaigns/3/details HTTP/1.1" 200 OK
+2025-12-08 11:06:34,146 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:50275 - "OPTIONS /api/v1/campaigns/3/send HTTP/1.1" 200 OK
+2025-12-08 11:06:38,281 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-12-08 11:06:38,281 INFO sqlalchemy.engine.Engine SELECT users.id, users.email, users.hashed_password, users.is_active, users.full_name, users.email_verified, users.two_factor_enabled 
+FROM users 
+WHERE users.email = ?
+2025-12-08 11:06:38,281 INFO sqlalchemy.engine.Engine [cached since 592.4s ago] ('harsh@test.in',)
+2025-12-08 11:06:38,282 INFO sqlalchemy.engine.Engine SELECT campaigns.id, campaigns.name, campaigns.subject, campaigns.body, campaigns.created_at, campaigns.status, campaigns.user_id 
+FROM campaigns 
+WHERE campaigns.id = ? AND campaigns.user_id = ?
+2025-12-08 11:06:38,282 INFO sqlalchemy.engine.Engine [cached since 445.9s ago] (3, 1)
+2025-12-08 11:06:38,283 INFO sqlalchemy.engine.Engine SELECT smtp_configs.id, smtp_configs.host, smtp_configs.port, smtp_configs.username, smtp_configs.password, smtp_configs.from_email, smtp_configs.user_id 
+FROM smtp_configs 
+WHERE smtp_configs.user_id = ?
+2025-12-08 11:06:38,283 INFO sqlalchemy.engine.Engine [cached since 582.9s ago] (1,)
+2025-12-08 11:06:38,284 INFO sqlalchemy.engine.Engine SELECT recipients.id, recipients.email, recipients.data, recipients.status, recipients.campaign_id 
+FROM recipients 
+WHERE recipients.campaign_id = ? AND recipients.status = ?
+2025-12-08 11:06:38,284 INFO sqlalchemy.engine.Engine [cached since 249.6s ago] (3, 'pending')
+2025-12-08 11:06:38,285 INFO sqlalchemy.engine.Engine SELECT attachments.id, attachments.filename, attachments.content_type, attachments.file_data, attachments.file_size, attachments.campaign_id 
+FROM attachments 
+WHERE attachments.campaign_id = ?
+2025-12-08 11:06:38,285 INFO sqlalchemy.engine.Engine [cached since 445.9s ago] (3,)
+2025-12-08 11:06:38,286 INFO sqlalchemy.engine.Engine UPDATE campaigns SET status=? WHERE campaigns.id = ?
+2025-12-08 11:06:38,286 INFO sqlalchemy.engine.Engine [cached since 249.6s ago] ('sending', 3)
+2025-12-08 11:06:38,287 INFO sqlalchemy.engine.Engine COMMIT
+   📎 1 attachment(s) added
+📧 Attempting to send email to golapankaj75@gmail.com
+   Host: smtp.gmail.com:587
+   Username: harendrakashyap027@gmail.com
+✅ Email sent successfully to golapankaj75@gmail.com
+2025-12-08 11:06:43,034 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-12-08 11:06:43,034 INFO sqlalchemy.engine.Engine UPDATE campaigns SET status=? WHERE campaigns.id = ?
+2025-12-08 11:06:43,034 INFO sqlalchemy.engine.Engine [cached since 254.4s ago] ('completed', 3)
+2025-12-08 11:06:43,036 INFO sqlalchemy.engine.Engine UPDATE recipients SET status=? WHERE recipients.id = ?
+2025-12-08 11:06:43,036 INFO sqlalchemy.engine.Engine [cached since 93.81s ago] ('sent', 18)
+2025-12-08 11:06:43,036 INFO sqlalchemy.engine.Engine COMMIT
+INFO:     127.0.0.1:50275 - "POST /api/v1/campaigns/3/send HTTP/1.1" 200 OK
+2025-12-08 11:06:43,042 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-12-08 11:06:43,042 INFO sqlalchemy.engine.Engine SELECT users.id, users.email, users.hashed_password, users.is_active, users.full_name, users.email_verified, users.two_factor_enabled 
+FROM users 
+WHERE users.email = ?
+2025-12-08 11:06:43,042 INFO sqlalchemy.engine.Engine [cached since 597.2s ago] ('harsh@test.in',)
+2025-12-08 11:06:43,043 INFO sqlalchemy.engine.Engine SELECT campaigns.id, campaigns.name, campaigns.subject, campaigns.body, campaigns.created_at, campaigns.status, campaigns.user_id 
+FROM campaigns 
+WHERE campaigns.id = ? AND campaigns.user_id = ?
+2025-12-08 11:06:43,043 INFO sqlalchemy.engine.Engine [cached since 450.6s ago] (3, 1)
+2025-12-08 11:06:43,045 INFO sqlalchemy.engine.Engine SELECT count(recipients.id) AS total, sum(CASE WHEN (recipients.status = ?) THEN ? ELSE ? END) AS sent, sum(CASE WHEN (recipients.status = ?) THEN ? ELSE ? END) AS pending, sum(CASE WHEN (recipients.status = ?) THEN ? ELSE ? END) AS failed 
+FROM recipients 
+WHERE recipients.campaign_id = ?
+2025-12-08 11:06:43,045 INFO sqlalchemy.engine.Engine [cached since 450.6s ago] ('sent', 1, 0, 'pending', 1, 0, 'failed', 1, 0, 3)
+2025-12-08 11:06:43,046 INFO sqlalchemy.engine.Engine SELECT recipients.id, recipients.email, recipients.data, recipients.status, recipients.campaign_id 
+FROM recipients 
+WHERE recipients.campaign_id = ?
+ LIMIT ? OFFSET ?
+2025-12-08 11:06:43,046 INFO sqlalchemy.engine.Engine [cached since 450.6s ago] (3, 100, 0)
+INFO:     127.0.0.1:50275 - "GET /api/v1/campaigns/3/details HTTP/1.1" 200 OK
+2025-12-08 11:06:43,047 INFO sqlalchemy.engine.Engine ROLLBACK

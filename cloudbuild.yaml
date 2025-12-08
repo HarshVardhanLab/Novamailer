@@ -1,0 +1,113 @@
+# Google Cloud Build configuration for NovaMailer
+steps:
+  # Build Backend Docker Image
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/novamailer-backend:$COMMIT_SHA'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/novamailer-backend:latest'
+      - '-f'
+      - 'backend/Dockerfile.prod'
+      - './backend'
+    id: 'build-backend'
+
+  # Build Frontend Docker Image
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/novamailer-frontend:$COMMIT_SHA'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/novamailer-frontend:latest'
+      - '-f'
+      - 'frontend/Dockerfile.prod'
+      - '--build-arg'
+      - 'NEXT_PUBLIC_API_URL=https://backend-${_SERVICE_SUFFIX}.a.run.app'
+      - './frontend'
+    id: 'build-frontend'
+
+  # Push Backend Image
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'gcr.io/$PROJECT_ID/novamailer-backend:$COMMIT_SHA'
+    id: 'push-backend'
+    waitFor: ['build-backend']
+
+  # Push Frontend Image
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'gcr.io/$PROJECT_ID/novamailer-frontend:$COMMIT_SHA'
+    id: 'push-frontend'
+    waitFor: ['build-frontend']
+
+  # Deploy Backend to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'novamailer-backend'
+      - '--image'
+      - 'gcr.io/$PROJECT_ID/novamailer-backend:$COMMIT_SHA'
+      - '--region'
+      - '${_REGION}'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
+      - '--memory'
+      - '512Mi'
+      - '--cpu'
+      - '1'
+      - '--max-instances'
+      - '10'
+      - '--set-env-vars'
+      - 'DATABASE_URL=${_DATABASE_URL},SECRET_KEY=${_SECRET_KEY}'
+    id: 'deploy-backend'
+    waitFor: ['push-backend']
+
+  # Deploy Frontend to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'novamailer-frontend'
+      - '--image'
+      - 'gcr.io/$PROJECT_ID/novamailer-frontend:$COMMIT_SHA'
+      - '--region'
+      - '${_REGION}'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
+      - '--memory'
+      - '512Mi'
+      - '--cpu'
+      - '1'
+      - '--max-instances'
+      - '10'
+      - '--set-env-vars'
+      - 'NEXT_PUBLIC_API_URL=https://novamailer-backend-${_SERVICE_SUFFIX}.a.run.app'
+    id: 'deploy-frontend'
+    waitFor: ['push-frontend', 'deploy-backend']
+
+# Store images in Container Registry
+images:
+  - 'gcr.io/$PROJECT_ID/novamailer-backend:$COMMIT_SHA'
+  - 'gcr.io/$PROJECT_ID/novamailer-backend:latest'
+  - 'gcr.io/$PROJECT_ID/novamailer-frontend:$COMMIT_SHA'
+  - 'gcr.io/$PROJECT_ID/novamailer-frontend:latest'
+
+# Substitution variables
+substitutions:
+  _REGION: 'us-central1'
+  _SERVICE_SUFFIX: ''
+  _DATABASE_URL: 'sqlite:///./novamailer.db'
+  _SECRET_KEY: 'your-secret-key-change-in-production'
+
+options:
+  machineType: 'N1_HIGHCPU_8'
+  logging: CLOUD_LOGGING_ONLY

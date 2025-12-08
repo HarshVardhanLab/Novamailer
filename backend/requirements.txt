@@ -1,0 +1,17 @@
+fastapi
+uvicorn
+sqlalchemy
+aiosqlite
+aiomysql
+aioodbc
+pyodbc
+cryptography
+python-jose[cryptography]
+bcrypt
+python-multipart
+aiosmtplib
+pandas
+pydantic-settings
+python-dotenv
+jinja2
+email-validator
