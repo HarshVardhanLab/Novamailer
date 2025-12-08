@@ -1,0 +1,30 @@
+
+> frontend@0.1.0 dev
+> next dev
+
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+ ⚠ `eslint` configuration in next.config.ts is no longer supported. See more info here: https://nextjs.org/docs/app/api-reference/cli/next#next-lint-options
+ ⚠ Invalid next.config.ts options detected: 
+ ⚠     Unrecognized key(s) in object: 'eslint'
+ ⚠ See more info here: https://nextjs.org/docs/messages/invalid-next-config
+   ▲ Next.js 16.0.5 (Turbopack)
+   - Local:         http://localhost:3000
+   - Network:       http://10.129.115.214:3000
+
+ ✓ Starting...
+ ✓ Ready in 1246ms
+ GET / 307 in 2.6s (compile: 2.4s, render: 131ms)
+ GET /login 200 in 911ms (compile: 762ms, render: 149ms)
+ GET /dashboard 200 in 1294ms (compile: 1265ms, render: 29ms)
+ GET /settings 200 in 376ms (compile: 357ms, render: 19ms)
+ GET /dashboard 200 in 23ms (compile: 3ms, render: 20ms)
+ GET /campaigns 200 in 305ms (compile: 286ms, render: 19ms)
+ GET /campaigns/new 200 in 603ms (compile: 579ms, render: 24ms)
+ GET /templates 200 in 292ms (compile: 274ms, render: 18ms)
+ GET /campaigns 200 in 24ms (compile: 4ms, render: 20ms)
+ GET /campaigns/2 200 in 944ms (compile: 924ms, render: 20ms)
+ GET /dashboard 200 in 48ms (compile: 11ms, render: 38ms)
+ GET /campaigns/3 200 in 26ms (compile: 8ms, render: 18ms)
+ GET /login 200 in 68ms (compile: 5ms, render: 63ms)
+ GET /register 200 in 424ms (compile: 402ms, render: 22ms)
+ GET /login 200 in 18ms (compile: 2ms, render: 16ms)
