@@ -28,3 +28,5 @@
  GET /login 200 in 68ms (compile: 5ms, render: 63ms)
  GET /register 200 in 424ms (compile: 402ms, render: 22ms)
  GET /login 200 in 18ms (compile: 2ms, render: 16ms)
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+[?25h
