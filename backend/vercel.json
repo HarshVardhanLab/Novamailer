@@ -1,0 +1,27 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "api/index.py",
+      "use": "@vercel/python",
+      "config": {
+        "maxLambdaSize": "50mb",
+        "runtime": "python3.11"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/v1/(.*)",
+      "dest": "api/index.py"
+    },
+    {
+      "src": "/api",
+      "dest": "api/index.py"
+    },
+    {
+      "src": "/api/health",
+      "dest": "api/index.py"
+    }
+  ]
+}

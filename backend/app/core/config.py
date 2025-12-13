@@ -7,8 +7,8 @@ class Settings(BaseSettings):
     SECRET_KEY: str = "YOUR_SECRET_KEY_CHANGE_IN_PRODUCTION"
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
-    # Database URL - supports SQLite, PostgreSQL, MySQL
-    # Railway provides DATABASE_URL automatically for PostgreSQL
+    # Database URL - supports SQLite, PostgreSQL (Supabase), MySQL
+    # For Supabase: use the connection string from Project Settings > Database
     DATABASE_URL: str = "sqlite+aiosqlite:///./novamailer.db"
     # CORS origins - comma-separated list
     CORS_ORIGINS: str = "http://localhost:3000"
@@ -21,10 +21,10 @@ class Settings(BaseSettings):
     def get_database_url(self) -> str:
         """Convert DATABASE_URL to async version if needed"""
         url = self.DATABASE_URL
-        # Railway PostgreSQL URL starts with postgres://
+        # Supabase/Railway PostgreSQL URL starts with postgres:// or postgresql://
         if url.startswith("postgres://"):
             url = url.replace("postgres://", "postgresql+asyncpg://", 1)
-        elif url.startswith("postgresql://"):
+        elif url.startswith("postgresql://") and "+asyncpg" not in url:
             url = url.replace("postgresql://", "postgresql+asyncpg://", 1)
         return url
 

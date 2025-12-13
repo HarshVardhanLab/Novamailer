@@ -14,3 +14,4 @@ pydantic-settings
 python-dotenv
 jinja2
 email-validator
+mangum
