@@ -1,6 +1,7 @@
 import pandas as pd
 from fastapi import UploadFile, HTTPException
 import io
+import math
 
 async def parse_csv(file: UploadFile):
     if not file.filename.endswith('.csv'):
@@ -23,5 +24,18 @@ async def parse_csv(file: UploadFile):
     if not email_col:
         raise HTTPException(status_code=400, detail="CSV must contain an 'email' column.")
     
-    # Convert to list of dicts
-    return df.to_dict(orient='records')
+    # Convert to list of dicts and replace NaN with empty string
+    records = df.to_dict(orient='records')
+    
+    # Clean NaN values - PostgreSQL JSON doesn't accept NaN
+    cleaned_records = []
+    for record in records:
+        cleaned = {}
+        for key, value in record.items():
+            if pd.isna(value) or (isinstance(value, float) and math.isnan(value)):
+                cleaned[key] = ""
+            else:
+                cleaned[key] = value
+        cleaned_records.append(cleaned)
+    
+    return cleaned_records
