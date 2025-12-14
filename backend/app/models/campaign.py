@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Text
 from sqlalchemy.orm import relationship
-from datetime import datetime, timezone
+from datetime import datetime
 from app.core.database import Base
 
 class Campaign(Base):
@@ -10,7 +10,7 @@ class Campaign(Base):
     name = Column(String(255), nullable=False)
     subject = Column(String(500), nullable=False)
     body = Column(Text, nullable=False)
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=datetime.utcnow)
     status = Column(String(50), default="draft") # draft, sending, completed, failed
     
     user_id = Column(Integer, ForeignKey("users.id"))
