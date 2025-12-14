@@ -72,14 +72,20 @@ async def send_email(
         tls_context.check_hostname = False
         tls_context.verify_mode = ssl.CERT_NONE
 
+        # Use SSL for port 465, STARTTLS for port 587
+        use_tls = smtp_config.port == 465
+        start_tls = smtp_config.port == 587
+
         await aiosmtplib.send(
             message,
             hostname=smtp_config.host,
             port=smtp_config.port,
             username=smtp_config.username,
             password=password,
-            start_tls=True,
+            use_tls=use_tls,
+            start_tls=start_tls,
             tls_context=tls_context,
+            timeout=30,
         )
         
         print(f"✅ Email sent successfully to {to_email}")
