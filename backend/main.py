@@ -1,6 +1,7 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from mangum import Mangum
 from app.routers import auth, campaigns, templates, smtp, uploads, stats
 from app.core.config import settings
 from app.core.database import engine, Base
@@ -36,5 +37,9 @@ async def root():
     return {"message": "Welcome to NovaMailer API"}
 
 @app.get("/health")
+@app.head("/health")
 async def health_check():
     return {"status": "ok"}
+
+# AWS Lambda handler (via Mangum)
+handler = Mangum(app, lifespan="off")

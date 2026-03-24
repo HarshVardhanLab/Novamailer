@@ -12,22 +12,52 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { Plus } from "lucide-react"
+import { Plus, Trash2 } from "lucide-react"
+import { toast } from "sonner"
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 
 export default function CampaignsPage() {
     const [campaigns, setCampaigns] = useState([])
+    const [deleteId, setDeleteId] = useState<number | null>(null)
+    const [isDeleting, setIsDeleting] = useState(false)
+
+    const fetchCampaigns = async () => {
+        try {
+            const res = await api.get("/campaigns")
+            setCampaigns(res.data)
+        } catch (e) {
+            console.error(e)
+        }
+    }
 
     useEffect(() => {
-        const fetchCampaigns = async () => {
-            try {
-                const res = await api.get("/campaigns")
-                setCampaigns(res.data)
-            } catch (e) {
-                console.error(e)
-            }
-        }
         fetchCampaigns()
     }, [])
+
+    const handleDelete = async () => {
+        if (!deleteId) return
+        
+        setIsDeleting(true)
+        try {
+            await api.delete(`/campaigns/${deleteId}`)
+            toast.success("Campaign deleted successfully")
+            setDeleteId(null)
+            fetchCampaigns()
+        } catch (error: any) {
+            toast.error(error.response?.data?.detail || "Failed to delete campaign")
+        } finally {
+            setIsDeleting(false)
+        }
+    }
 
     return (
         <div className="space-y-6">
@@ -66,16 +96,44 @@ export default function CampaignsPage() {
                                     </span>
                                 </TableCell>
                                 <TableCell>{new Date(campaign.created_at).toLocaleDateString()}</TableCell>
-                                <TableCell className="text-right">
+                                <TableCell className="text-right space-x-2">
                                     <Link href={`/campaigns/${campaign.id}`}>
                                         <Button variant="ghost" size="sm">View Details</Button>
                                     </Link>
+                                    <Button 
+                                        variant="ghost" 
+                                        size="sm"
+                                        onClick={() => setDeleteId(campaign.id)}
+                                    >
+                                        <Trash2 className="h-4 w-4 text-red-500" />
+                                    </Button>
                                 </TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
                 </Table>
             </div>
+
+            <AlertDialog open={deleteId !== null} onOpenChange={() => setDeleteId(null)}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            This action cannot be undone. This will permanently delete the campaign and all its recipients.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+                        <AlertDialogAction 
+                            onClick={handleDelete}
+                            disabled={isDeleting}
+                            className="bg-red-500 hover:bg-red-600"
+                        >
+                            {isDeleting ? "Deleting..." : "Delete"}
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     )
 }

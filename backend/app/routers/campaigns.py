@@ -8,8 +8,26 @@ from app.models.campaign import Campaign
 from app.models.user import User
 from app.models.attachment import Attachment
 from app.schemas.campaign import CampaignCreate, Campaign as CampaignSchema
+from pydantic import BaseModel
+from app.services.ai_service import ai_service
+
+class CampaignTopic(BaseModel):
+    topic: str
 
 router = APIRouter()
+
+@router.post("/suggest")
+async def suggest_campaign_ai(
+    request: CampaignTopic,
+    current_user: User = Depends(deps.get_current_user),
+):
+    try:
+        suggestion = await ai_service.suggest_campaign(request.topic)
+        return suggestion
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"AI suggestion failed: {str(e)}")
 
 @router.post("/", response_model=CampaignSchema)
 async def create_campaign(
@@ -44,6 +62,21 @@ async def read_campaign(
     if campaign is None:
         raise HTTPException(status_code=404, detail="Campaign not found")
     return campaign
+
+@router.delete("/{campaign_id}")
+async def delete_campaign(
+    campaign_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(deps.get_current_user),
+):
+    result = await db.execute(select(Campaign).filter(Campaign.id == campaign_id, Campaign.user_id == current_user.id))
+    campaign = result.scalars().first()
+    if not campaign:
+        raise HTTPException(status_code=404, detail="Campaign not found")
+    
+    await db.delete(campaign)
+    await db.commit()
+    return {"message": "Campaign deleted successfully"}
 
 @router.post("/{campaign_id}/upload-csv")
 async def upload_csv(
@@ -202,11 +235,31 @@ async def send_test_email(
             "company": "Test Company"
         }
     
+    # Get attachments
+    result = await db.execute(select(Attachment).filter(Attachment.campaign_id == campaign_id))
+    attachments = result.scalars().all()
+    
+    # Prepare attachment data
+    attachment_data = [
+        {
+            "filename": a.filename,
+            "content_type": a.content_type,
+            "data": a.file_data
+        } for a in attachments
+    ] if attachments else None
+    
     try:
         # Render both subject and body with template variables
         rendered_subject = template_service.render_template(campaign.subject, sample_data)
         rendered_body = template_service.render_template(campaign.body, sample_data)
-        await email.send_email(smtp_config, test_email, f"[TEST] {rendered_subject}", rendered_body)
+        
+        await email.send_email(
+            smtp_config, 
+            test_email, 
+            f"[TEST] {rendered_subject}", 
+            rendered_body,
+            attachments=attachment_data
+        )
         return {"message": f"Test email sent to {test_email}"}
     except Exception as e:
         import traceback

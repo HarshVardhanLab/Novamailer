@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import api from "@/lib/api"
 import { Button } from "@/components/ui/button"
+import { safeLocalStorage } from "@/lib/storage"
 import {
     Form,
     FormControl,
@@ -64,7 +65,7 @@ export default function LoginPage() {
                 toast.success("OTP sent to your email")
             } else {
                 // Direct login
-                localStorage.setItem("token", response.data.access_token)
+                safeLocalStorage.setItem("token", response.data.access_token)
                 toast.success("Logged in successfully")
                 router.push("/dashboard")
             }
@@ -91,15 +92,15 @@ export default function LoginPage() {
             toast.error("Please enter a valid 6-digit code")
             return
         }
-        
+
         setVerifyingOTP(true)
         try {
             const response = await api.post("/auth/verify-login", {
                 user_id: userId,
                 code: codeToVerify
             })
-            
-            localStorage.setItem("token", response.data.access_token)
+
+            safeLocalStorage.setItem("token", response.data.access_token)
             toast.success("Login successful")
             router.push("/dashboard")
         } catch (error: any) {
@@ -132,13 +133,13 @@ export default function LoginPage() {
                     </CardHeader>
                     <CardContent className="space-y-6">
                         <div className="space-y-4">
-                            <OTPInput 
+                            <OTPInput
                                 onComplete={handleOTPVerify}
                                 onChange={handleOtpChange}
                                 disabled={verifyingOTP}
                                 autoSubmit={false}
                             />
-                            
+
                             <Button
                                 onClick={() => handleOTPVerify()}
                                 disabled={!isOtpComplete || verifyingOTP}
@@ -146,7 +147,7 @@ export default function LoginPage() {
                             >
                                 {verifyingOTP ? "Verifying..." : "Verify & Login"}
                             </Button>
-                            
+
                             {verifyingOTP && (
                                 <p className="text-center text-sm text-muted-foreground">
                                     Verifying code...

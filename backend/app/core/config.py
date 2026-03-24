@@ -14,6 +14,8 @@ class Settings(BaseSettings):
     CORS_ORIGINS: str = "http://localhost:3000"
     # Frontend URL for email links
     FRONTEND_URL: str = "http://localhost:3000"
+    # Gemini API Key
+    GEMINI_API_KEY: str | None = None
 
     class Config:
         env_file = ".env"

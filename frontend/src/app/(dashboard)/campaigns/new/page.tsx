@@ -26,6 +26,16 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { toast } from "sonner"
+import { Sparkles, Loader2 } from "lucide-react"
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
 
 const formSchema = z.object({
     name: z.string().min(1, "Name is required"),
@@ -38,6 +48,9 @@ export default function NewCampaignPage() {
     const [isLoading, setIsLoading] = useState(false)
     const [templates, setTemplates] = useState<any[]>([])
     const [selectedTemplate, setSelectedTemplate] = useState<string>("")
+    const [isAiLoading, setIsAiLoading] = useState(false)
+    const [aiTopic, setAiTopic] = useState("")
+    const [isDialogOpen, setIsDialogOpen] = useState(false)
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -76,6 +89,27 @@ export default function NewCampaignPage() {
         }
     }
 
+    const handleGenerateAI = async () => {
+        if (!aiTopic) return;
+        setIsAiLoading(true);
+        try {
+            const res = await api.post("/campaigns/suggest", { topic: aiTopic });
+            if (res.data && res.data.subject && res.data.body) {
+                form.setValue("subject", res.data.subject);
+                form.setValue("body", res.data.body);
+                toast.success("Campaign content generated successfully!");
+                setIsDialogOpen(false);
+                setAiTopic("");
+                // Clear selected template since we are using AI content
+                setSelectedTemplate("none");
+            }
+        } catch (error: any) {
+            toast.error(error.response?.data?.detail || "Failed to suggest campaign content");
+        } finally {
+            setIsAiLoading(false);
+        }
+    };
+
     async function onSubmit(values: z.infer<typeof formSchema>) {
         setIsLoading(true)
         try {
@@ -92,7 +126,46 @@ export default function NewCampaignPage() {
 
     return (
         <div className="space-y-6 max-w-2xl mx-auto">
-            <h2 className="text-3xl font-bold tracking-tight">New Campaign</h2>
+            <div className="flex items-center justify-between">
+                <h2 className="text-3xl font-bold tracking-tight">New Campaign</h2>
+                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                    <DialogTrigger asChild>
+                        <Button type="button" variant="outline" className="gap-2 border-purple-200 bg-purple-50 text-purple-700 hover:bg-purple-100 hover:text-purple-800">
+                            <Sparkles className="h-4 w-4" />
+                            Auto-Suggest Content
+                        </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                        <DialogHeader>
+                            <DialogTitle>AI Campaign Suggestion</DialogTitle>
+                            <DialogDescription>
+                                Enter a topic for your campaign and our AI will suggest a catchy subject line and draft the email body.
+                            </DialogDescription>
+                        </DialogHeader>
+                        <div className="grid gap-4 py-4">
+                            <Textarea
+                                placeholder="E.g., Black Friday tech gadgets sale 50% off..."
+                                value={aiTopic}
+                                onChange={(e) => setAiTopic(e.target.value)}
+                                className="h-24"
+                            />
+                        </div>
+                        <DialogFooter>
+                            <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
+                            <Button type="button" onClick={handleGenerateAI} disabled={isAiLoading || !aiTopic.trim()}>
+                                {isAiLoading ? (
+                                    <>
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                        Generating...
+                                    </>
+                                ) : (
+                                    "Suggest Content"
+                                )}
+                            </Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
+            </div>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                     {/* Template Selection */}

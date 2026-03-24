@@ -1,225 +1,169 @@
-# 📧 NovaMailer - Email Marketing Platform
+# NovaMailer - Email Campaign Manager
 
-A complete email marketing platform with OTP verification, template management, and bulk email sending capabilities.
+A full-stack email campaign management system built with FastAPI and Next.js.
 
----
+## Features
 
-## ✨ Features
+- 📧 Email campaign management
+- � Campaign analytics and tracking
+- 📝 Template management with variables
+- � File attachments support
+- 🔐 User authentication with JWT
+- �  SMTP configuration
+- 📤 CSV recipient upload
+- 🎨 Modern UI with Next.js and Tailwind CSS
 
-### Core Features
-- 🔐 **User Authentication** - JWT-based authentication with OTP verification
-- 📧 **Email Templates** - Create and manage reusable email templates
-- 📊 **Campaign Management** - Create and track email campaigns
-- 📤 **Bulk Email Sending** - Send emails to multiple recipients
-- 📁 **CSV Upload** - Import recipients from CSV files
-- 📎 **File Attachments** - Attach files to your emails
-- 📈 **Statistics** - Track email campaign performance
+## Tech Stack
 
-### Security Features
-- ✅ **Email Verification** - OTP-based email verification for new users
-- ✅ **Two-Factor Authentication** - Optional 2FA for enhanced security
-- ✅ **Password Reset** - Secure password reset with OTP
-- ✅ **JWT Tokens** - Secure session management
-- ✅ **Password Hashing** - Bcrypt password encryption
+**Backend:**
+- FastAPI (Python)
+- SQLAlchemy (ORM)
+- Supabase (PostgreSQL)
+- JWT Authentication
+- Async SMTP
 
----
+**Frontend:**
+- Next.js 15
+- React 19
+- Tailwind CSS
+- Axios
+- Shadcn UI
 
-## 🚀 Quick Start
+## Local Development
 
 ### Prerequisites
+
 - Python 3.11+
-- Node.js 18+
-- npm or yarn
+- Node.js 20+
+- Supabase account (free tier)
 
-### Local Development
+### Backend Setup
 
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd novamailer
-   ```
-
-2. **Start Backend**
-   ```bash
-   cd backend
-   python -m venv venv
-   source venv/bin/activate  # Windows: venv\Scripts\activate
-   pip install -r requirements.txt
-   python main.py
-   ```
-
-3. **Start Frontend**
-   ```bash
-   cd frontend
-   npm install
-   npm run dev
-   ```
-
-4. **Access the application**
-   - Frontend: http://localhost:3000
-   - Backend: http://localhost:8000
-
----
-
-## ☁️ Cloud Deployment
-
-### Deploy to Azure (Recommended)
-
-**Quick Deployment:**
+1. Navigate to backend directory:
 ```bash
-# Install Azure CLI
-brew install azure-cli  # macOS
-# or download from: https://aka.ms/installazurecliwindows
-
-# Login
-az login
-
-# Deploy
-chmod +x deploy-azure.sh
-./deploy-azure.sh
+cd backend
 ```
 
-**Documentation:**
-- `AZURE_QUICK_START.md` - Quick start guide
-- `AZURE_DEPLOYMENT_GUIDE.md` - Comprehensive deployment guide
+2. Create virtual environment:
+```bash
+python3 -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
 
-**Estimated Time:** 15-20 minutes
-**Cost:** Free tier available, ~$0-10/month typical usage
+3. Install dependencies:
+```bash
+pip install -r requirements.txt
+```
 
----
+4. Update `.env` with your Supabase credentials
 
-## 📚 Documentation
+5. Run the backend:
+```bash
+uvicorn main:app --reload --port 8000
+```
 
-### User Guides
-- **`USER_GUIDE.md`** - Complete application user guide
-- **`CAMPAIGNS_VS_TEMPLATES_EXPLAINED.md`** - Understanding campaigns and templates
-- **`SUBJECT_VARIABLES_FIXED.md`** - Using variables in email subjects
+Backend will be available at: `http://localhost:8000`
 
-### Technical Documentation
-- **`OTP_FINAL_SUMMARY.md`** - OTP verification system details
-- **`RUN_PROJECT.md`** - Local development setup
-- **`PROJECT_STATUS.md`** - Project status and features
+### Frontend Setup
 
-### Deployment Guides
-- **`AZURE_QUICK_START.md`** - Quick Azure deployment
-- **`AZURE_DEPLOYMENT_GUIDE.md`** - Detailed Azure deployment
+1. Navigate to frontend directory:
+```bash
+cd frontend
+```
 
----
+2. Install dependencies:
+```bash
+npm install
+```
 
-## 🏗️ Architecture
+3. Run the frontend:
+```bash
+npm run dev
+```
 
-### Backend (FastAPI)
-- **Framework:** FastAPI
-- **Database:** SQLite (dev) / PostgreSQL (prod)
-- **Authentication:** JWT + OTP
-- **Email:** SMTP integration
+Frontend will be available at: `http://localhost:3000`
 
-### Frontend (Next.js)
-- **Framework:** Next.js 14
-- **UI:** Tailwind CSS + shadcn/ui
-- **State:** React Hooks
-- **API:** Axios
+## Quick Start Script
 
----
+Run both backend and frontend together:
 
-## 🔧 Configuration
+```bash
+./run-local.sh
+```
 
-### Backend Environment Variables
+## SMTP Configuration
+
+For local development, configure SMTP in the app:
+
+**Gmail:**
+- Host: `smtp.gmail.com`
+- Port: `587`
+- Username: Your Gmail address
+- Password: App Password (generate at https://myaccount.google.com/apppasswords)
+
+**Note:** Gmail SMTP works locally but may be blocked on some cloud platforms.
+
+## Database
+
+The app uses Supabase (PostgreSQL). Tables are created automatically on first run.
+
+To manually create tables:
+```bash
+cd backend
+python create_tables.py
+```
+
+## Environment Variables
+
+### Backend (.env)
 ```env
-DATABASE_URL=sqlite:///./novamailer.db
-SECRET_KEY=your-secret-key
-ALGORITHM=HS256
-ACCESS_TOKEN_EXPIRE_MINUTES=30
+DATABASE_URL=postgresql://postgres:[password]@db.xxx.supabase.co:5432/postgres
+SECRET_KEY=your-secret-key-min-32-characters
 CORS_ORIGINS=http://localhost:3000
+FRONTEND_URL=http://localhost:3000
 ```
 
-### Frontend Environment Variables
+### Frontend (.env.local)
 ```env
-NEXT_PUBLIC_API_URL=http://localhost:8000
+NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
 ```
 
----
+## API Documentation
 
-## 📊 Tech Stack
+Once the backend is running, visit:
+- Swagger UI: `http://localhost:8000/docs`
+- ReDoc: `http://localhost:8000/redoc`
 
-### Backend
-- FastAPI
-- SQLAlchemy (ORM)
-- Pydantic (validation)
-- Python-JOSE (JWT)
-- Passlib (password hashing)
-- Uvicorn (ASGI server)
+## Project Structure
 
-### Frontend
-- Next.js 14
-- React 18
-- TypeScript
-- Tailwind CSS
-- shadcn/ui components
-- React Hook Form
-- Zod (validation)
+```
+novamailer/
+├── backend/
+│   ├── app/
+│   │   ├── routers/      # API endpoints
+│   │   ├── models/       # Database models
+│   │   ├── schemas/      # Pydantic schemas
+│   │   ├── services/     # Business logic
+│   │   └── core/         # Config & database
+│   ├── main.py           # FastAPI app
+│   └── requirements.txt
+├── frontend/
+│   ├── src/
+│   │   ├── app/          # Next.js pages
+│   │   ├── components/   # React components
+│   │   └── lib/          # Utilities
+│   └── package.json
+└── README.md
+```
 
-### Database
-- SQLite (development)
-- PostgreSQL (production)
+## Deployment
 
----
+See `DEPLOY_VERCEL_SUPABASE.md` for deployment instructions.
 
-## 🔐 Security
+## License
 
-- JWT-based authentication
-- OTP verification for email
-- Optional 2FA
-- Password hashing with bcrypt
-- CORS protection
-- SQL injection protection
-- XSS protection
+MIT
 
----
+## Support
 
-## 💰 Cost Estimate (Azure)
-
-### Free Tier
-- 180,000 vCPU-seconds/month
-- 360,000 GiB-seconds/month
-
-### Typical Usage
-- **Small** (< 10k emails/month): $0-10/month
-- **Medium** (100k emails/month): $20-40/month
-- **Large** (1M emails/month): $100-200/month
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
----
-
-## 📝 License
-
-This project is licensed under the MIT License.
-
----
-
-## 🆘 Support
-
-For issues and questions:
-- Check the documentation in the `docs` folder
-- Review `USER_GUIDE.md` for application usage
-- See `AZURE_DEPLOYMENT_GUIDE.md` for deployment help
-
----
-
-## 🎯 Roadmap
-
-- [ ] Multi-language support
-- [ ] Advanced analytics
-- [ ] A/B testing
-- [ ] Email scheduling
-- [ ] Webhook integrations
-- [ ] API documentation
-
----
-
-**Built with ❤️ for email marketing**
+For issues and questions, please open an issue on GitHub.

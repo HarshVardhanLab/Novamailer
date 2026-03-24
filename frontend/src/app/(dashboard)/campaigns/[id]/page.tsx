@@ -27,9 +27,19 @@ export default function CampaignDetailPage() {
     const [uploading, setUploading] = useState(false)
 
     useEffect(() => {
+        if (!params.id) return
         fetchCampaignDetails()
         fetchAttachments()
     }, [params.id])
+
+    // Auto-refresh stats while campaign is sending
+    useEffect(() => {
+        if (!campaign || campaign.status !== 'sending') return
+        const interval = setInterval(() => {
+            fetchCampaignDetails()
+        }, 3000)
+        return () => clearInterval(interval)
+    }, [campaign?.status])
 
     const fetchCampaignDetails = async () => {
         try {
@@ -43,6 +53,7 @@ export default function CampaignDetailPage() {
     }
 
     const fetchAttachments = async () => {
+        if (!params.id) return
         try {
             const res = await api.get(`/campaigns/${params.id}/attachments`)
             setAttachments(res.data)
@@ -157,7 +168,7 @@ export default function CampaignDetailPage() {
         try {
             const res = await api.post(`/campaigns/${params.id}/send`)
             toast.success(res.data.message)
-            fetchCampaignDetails()
+            fetchCampaignDetails() // initial refresh
         } catch (e: any) {
             toast.error(e.response?.data?.detail || "Failed to send campaign")
         } finally {

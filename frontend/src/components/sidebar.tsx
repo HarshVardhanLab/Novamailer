@@ -4,6 +4,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
+import { safeLocalStorage } from "@/lib/storage"
 import { LayoutDashboard, Mail, FileText, Settings, LogOut } from "lucide-react"
 
 const sidebarItems = [
@@ -36,7 +37,7 @@ export function Sidebar() {
             </div>
             <div className="p-4">
                 <Button variant="ghost" className="w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-100 dark:hover:bg-red-900/20" onClick={() => {
-                    localStorage.removeItem("token")
+                    safeLocalStorage.removeItem("token")
                     window.location.href = "/login"
                 }}>
                     <LogOut className="mr-2 h-4 w-4" />
