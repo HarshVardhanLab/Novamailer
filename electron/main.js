@@ -264,7 +264,7 @@ if (!gotTheLock) {
       console.log('App path:', app.getAppPath());
       console.log('Resources path:', process.resourcesPath);
       
-      await startBackend();
+      // await startBackend(); // Disabled because we are using EC2 backend
       await startFrontend();
       createWindow();
     } catch (error) {
