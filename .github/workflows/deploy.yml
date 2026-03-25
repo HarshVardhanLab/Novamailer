@@ -32,4 +32,4 @@ jobs:
             python3 migrate_otp.py || true
             
             # Restart the backend service using pm2
-            pm2 restart novamailer-backend || pm2 start startup.sh --name "novamailer-backend"
+            pm2 restart novamailer-backend || pm2 start /home/ubuntu/Novamailer/backend/startup.sh --name "novamailer-backend" --cwd /home/ubuntu/Novamailer/backend
