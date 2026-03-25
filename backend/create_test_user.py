@@ -10,7 +10,8 @@ async def create_user():
             email="admin@example.com",
             hashed_password=get_password_hash("password123"),
             full_name="Admin Test",
-            is_active=True
+            is_active=True,
+            email_verified=True
         )
         session.add(user)
         try:

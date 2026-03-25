@@ -1,0 +1,34 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to EC2 via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd ~/nova-mailer
+            
+            # Pull latest changes from GitHub
+            git pull origin main
+            
+            # Update backend dependencies
+            cd backend
+            source venv/bin/activate
+            pip install -r requirements.txt
+            
+            # Run migrations if any
+            python migrate_otp.py || true
+            
+            # Restart the backend service using pm2
+            pm2 restart novamailer-backend || pm2 start startup.sh --name "novamailer-backend"

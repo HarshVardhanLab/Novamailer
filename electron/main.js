@@ -183,7 +183,7 @@ function startFrontend() {
         cwd: frontendPath,
         env: { 
           ...process.env,
-          NEXT_PUBLIC_API_URL: `http://localhost:${BACKEND_PORT}/api/v1`
+          NEXT_PUBLIC_API_URL: `http://18.208.181.220:8000/api/v1`
         },
         shell: true
       });
@@ -200,7 +200,7 @@ function startFrontend() {
         env: { 
           ...process.env,
           ELECTRON_RUN_AS_NODE: '1',
-          NEXT_PUBLIC_API_URL: `http://localhost:${BACKEND_PORT}/api/v1`,
+          NEXT_PUBLIC_API_URL: `http://18.208.181.220:8000/api/v1`,
           PORT: FRONTEND_PORT.toString(),
           HOSTNAME: '0.0.0.0'
         }
