@@ -17,7 +17,8 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            cd ~/nova-mailer
+            export PATH=$PATH:/usr/local/bin:/usr/bin:/home/ubuntu/.nvm/versions/node/$(ls -t /home/ubuntu/.nvm/versions/node/ | head -1)/bin || true
+            cd ~/Novamailer
             
             # Pull latest changes from GitHub
             git pull origin main
@@ -28,7 +29,7 @@ jobs:
             pip install -r requirements.txt
             
             # Run migrations if any
-            python migrate_otp.py || true
+            python3 migrate_otp.py || true
             
             # Restart the backend service using pm2
             pm2 restart novamailer-backend || pm2 start startup.sh --name "novamailer-backend"
