@@ -1,175 +1,115 @@
-# NovaMailer Desktop - Intel Mac Installation Guide
+# NovaMailer Desktop — Installation Guide
 
-## 📦 What's Included
-
-Your **NovaMailer-Intel-Standalone.dmg** (209MB) contains:
-
-✅ **Python FastAPI Backend** - Fully bundled with all dependencies
-✅ **Next.js Frontend** - Production build with standalone server
-✅ **SQLite Database** - Local data storage (created on first run)
-✅ **All Dependencies** - No need to install Python, Node.js, or anything else
-✅ **SMTP Email Support** - Configure Gmail, Outlook, or any SMTP server
-
-## 🚀 Installation Steps
-
-### 1. Open the DMG
-Double-click `NovaMailer-Intel-Standalone.dmg` on your Desktop
-
-### 2. Install the App
-Drag **NovaMailer** to your **Applications** folder
-
-### 3. First Launch (Important!)
-Since the app isn't signed with an Apple Developer certificate:
-
-1. Open **Applications** folder
-2. **Right-click** (or Control+click) on **NovaMailer**
-3. Select **"Open"** from the menu
-4. Click **"Open"** in the security dialog
-5. The app will launch (this step is only needed once)
-
-### 4. Wait for Startup
-The first launch takes 30-60 seconds because:
-- Python virtual environment is created
-- All Python dependencies are installed
-- Backend server starts on port 8000
-- Frontend server starts on port 3000
-- Database is initialized
-
-You'll see the NovaMailer window open automatically when ready.
-
-## 👤 First Time Setup
-
-### Create Your Account
-1. Click **"Register"** on the login screen
-2. Enter your email and password
-3. Click **"Create Account"**
-4. You'll be logged in automatically
-
-### Configure SMTP (To Send Emails)
-1. Go to **Settings** → **SMTP Configuration**
-2. Enter your SMTP details:
-
-**For Gmail:**
-- Host: `smtp.gmail.com`
-- Port: `587`
-- Username: Your Gmail address
-- Password: Your Gmail App Password (not regular password)
-- From Email: Your Gmail address
-- From Name: Your name
-
-**For Outlook:**
-- Host: `smtp-mail.outlook.com`
-- Port: `587`
-- Username: Your Outlook email
-- Password: Your Outlook password
-- From Email: Your Outlook email
-- From Name: Your name
-
-## 📧 Using NovaMailer
-
-### Create a Campaign
-1. Go to **Campaigns** → **New Campaign**
-2. Enter campaign name and subject
-3. Select or create a template
-4. Upload a CSV file with recipients (columns: email, name, etc.)
-5. Click **"Create Campaign"**
-6. Click **"Send"** to start sending
-
-### Create Templates
-1. Go to **Templates** → **New Template**
-2. Enter template name
-3. Write your HTML email content
-4. Use variables like `{{name}}`, `{{email}}` for personalization
-5. Save the template
-
-## 💾 Data Storage
-
-All your data is stored locally at:
-```
-~/Library/Application Support/NovaMailer/novamailer.db
-```
-
-This includes:
-- User accounts
-- Campaigns
-- Templates
-- Recipients
-- SMTP configurations
-
-## 🔧 Troubleshooting
-
-### App Won't Open
-**Problem:** "NovaMailer can't be opened because it is from an unidentified developer"
-
-**Solution:** Follow step 3 above (Right-click → Open)
-
-### Backend Not Starting
-**Problem:** App opens but shows connection errors
-
-**Solution:** 
-- Wait 60 seconds for first-time setup
-- Check Activity Monitor for Python processes
-- Restart the app
-
-### Port Already in Use
-**Problem:** "Port 8000 or 3000 already in use"
-
-**Solution:**
-```bash
-# Kill processes on port 8000
-lsof -ti:8000 | xargs kill -9
-
-# Kill processes on port 3000
-lsof -ti:3000 | xargs kill -9
-```
-
-### Reset Everything
-**Problem:** App is broken or corrupted
-
-**Solution:**
-1. Quit NovaMailer
-2. Delete: `~/Library/Application Support/NovaMailer/`
-3. Restart NovaMailer (fresh database will be created)
-
-## 🎯 Features
-
-- ✉️ **Bulk Email Campaigns** - Send personalized emails to thousands
-- 📝 **HTML Templates** - Create beautiful email templates
-- 📊 **Campaign Tracking** - Monitor sent, failed, and pending emails
-- 📁 **CSV Import** - Upload recipient lists from CSV files
-- 🔐 **Secure** - All data stored locally, no cloud required
-- 🚀 **Fast** - Native desktop performance
-
-## 📋 System Requirements
-
-- **macOS:** 10.13 (High Sierra) or later
-- **Architecture:** Intel x64 (64-bit)
-- **RAM:** 4GB minimum, 8GB recommended
-- **Disk Space:** 500MB for app + data
-- **Internet:** Required only for sending emails via SMTP
-
-## 🆘 Support
-
-If you encounter issues:
-
-1. Check the Console app for error logs
-2. Look for "NovaMailer" or "Electron" entries
-3. Check backend logs in the app's data directory
-
-## 🔄 Updates
-
-To update NovaMailer:
-1. Download the new DMG file
-2. Quit the current NovaMailer app
-3. Replace the app in Applications folder
-4. Your data will be preserved
-
-## 📄 License
-
-MIT License - Free to use and modify
+NovaMailer Desktop is a lightweight Electron app that wraps the Next.js frontend.
+It connects to your EC2-hosted backend automatically — no Python, no local server needed.
 
 ---
 
-**Enjoy using NovaMailer! 🚀**
+## macOS
 
-For questions or issues, check the project documentation.
+### Install
+1. Download `NovaMailer-2.0.0.dmg` (Intel) or `NovaMailer-2.0.0-arm64.dmg` (Apple Silicon M1/M2/M3)
+2. Double-click the `.dmg` to open it
+3. Drag **NovaMailer** into the **Applications** folder
+4. Eject the disk image
+
+### First Launch (Gatekeeper bypass)
+Because the app isn't signed with an Apple Developer certificate, macOS will block it the first time:
+
+1. Open **Finder → Applications**
+2. **Right-click** NovaMailer → **Open**
+3. Click **Open** in the dialog
+4. The app launches and macOS remembers your choice — no repeat needed
+
+### Uninstall
+Drag NovaMailer from Applications to Trash.
+
+---
+
+## Windows
+
+### Install
+1. Download `NovaMailer-Setup-2.0.0.exe`
+2. Double-click the installer
+3. Click **Next** on the welcome screen
+4. Choose install location (default is fine) → **Next**
+5. Click **Install**
+6. Click **Finish** — NovaMailer launches automatically
+
+A desktop shortcut and Start Menu entry are created automatically.
+
+### Portable (no install)
+Download `NovaMailer-2.0.0-portable.exe` and run it directly — no installation, no admin rights needed.
+
+### Uninstall
+**Settings → Apps → NovaMailer → Uninstall**
+or use **Add/Remove Programs** in Control Panel.
+
+---
+
+## Linux
+
+### AppImage (universal — works on any distro)
+```bash
+chmod +x NovaMailer-2.0.0.AppImage
+./NovaMailer-2.0.0.AppImage
+```
+To integrate with your desktop launcher, use [AppImageLauncher](https://github.com/TheAssassin/AppImageLauncher).
+
+### Debian / Ubuntu (.deb)
+```bash
+sudo dpkg -i novamailer_2.0.0_amd64.deb
+# Launch from Applications menu or:
+novamailer
+```
+
+### Uninstall
+```bash
+sudo dpkg -r novamailer
+```
+
+---
+
+## First-Time Setup (all platforms)
+
+1. Launch NovaMailer
+2. Click **Register** to create your account
+3. Go to **Settings** and configure your SMTP credentials to send campaigns
+4. That's it — your data lives on the EC2 server
+
+---
+
+## Building from Source
+
+Requirements: Node.js 20+, npm
+
+```bash
+# Clone the repo
+git clone https://github.com/yourorg/novamailer
+cd novamailer
+
+# Build for your current OS
+chmod +x build-desktop.sh
+./build-desktop.sh
+
+# Build for a specific platform
+./build-desktop.sh mac
+./build-desktop.sh win
+./build-desktop.sh linux
+
+# Override the EC2 backend URL
+NOVAMAILER_API_URL=http://your-server:8000/api/v1 ./build-desktop.sh mac
+```
+
+Installers are output to `electron/dist/`.
+
+---
+
+## Troubleshooting
+
+| Problem | Fix |
+|---|---|
+| macOS: "app is damaged" | Right-click → Open, or run `xattr -cr /Applications/NovaMailer.app` |
+| Windows: SmartScreen warning | Click "More info" → "Run anyway" |
+| App shows blank screen | Check your internet connection to the EC2 server |
+| Login fails | Verify the EC2 backend is running: `http://18.208.181.220:8000/health` |

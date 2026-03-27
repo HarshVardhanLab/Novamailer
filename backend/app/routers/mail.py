@@ -42,12 +42,24 @@ async def connect_imap(
 ):
     """Validate IMAP credentials and return folder list."""
     try:
+        # Validate inputs
+        if not creds.host or len(creds.host) > 255:
+            raise HTTPException(status_code=400, detail="Invalid host")
+        if not 1 <= creds.port <= 65535:
+            raise HTTPException(status_code=400, detail="Invalid port")
+        if not creds.username or len(creds.username) > 255:
+            raise HTTPException(status_code=400, detail="Invalid username")
+        
         folders = await imap_service.list_folders(
             creds.host, creds.port, creds.username, creds.password
         )
         return {"success": True, "folders": folders}
+    except HTTPException:
+        raise
     except imaplib.IMAP4.error as e:
         raise HTTPException(status_code=401, detail=f"Authentication failed: {str(e)}")
+    except TimeoutError:
+        raise HTTPException(status_code=504, detail="Connection timeout. Please check your server settings.")
     except Exception as e:
         raise HTTPException(status_code=502, detail=f"IMAP error: {str(e)}")
 
@@ -275,7 +287,6 @@ async def send_mail(
     msg.attach(MIMEText(req.body, "html"))
 
     try:
-        password = smtp_config.password.replace(" ", "")
         tls_ctx = ssl.create_default_context()
         tls_ctx.check_hostname = False
         tls_ctx.verify_mode = ssl.CERT_NONE
@@ -295,7 +306,31 @@ async def send_mail(
         await smtp.connect()
         if start_tls:
             await smtp.starttls(tls_context=tls_ctx)
-        await smtp.login(smtp_config.username, password)
+        
+        # Handle OAuth vs password authentication
+        if smtp_config.auth_type == "oauth":
+            from app.services import oauth_service
+            # Ensure token is valid
+            access_token, new_expires = await oauth_service.ensure_valid_token(
+                smtp_config.oauth_provider,
+                smtp_config.oauth_access_token,
+                smtp_config.oauth_refresh_token,
+                smtp_config.oauth_token_expires_at
+            )
+            # Update token if refreshed
+            if new_expires != smtp_config.oauth_token_expires_at:
+                smtp_config.oauth_access_token = access_token
+                smtp_config.oauth_token_expires_at = new_expires
+                await db.commit()
+            
+            # Use XOAUTH2 authentication
+            xoauth2_string = oauth_service.generate_xoauth2_string(smtp_config.username, access_token)
+            await smtp.execute_command(b"AUTH", b"XOAUTH2", xoauth2_string.encode())
+        else:
+            # Use password authentication
+            password = smtp_config.password.replace(" ", "")
+            await smtp.login(smtp_config.username, password)
+        
         await smtp.sendmail(smtp_config.from_email, all_recipients, msg.as_string())
         await smtp.quit()
 

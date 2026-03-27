@@ -6,6 +6,7 @@ from pydantic import BaseModel
 from app import deps
 from app.core.database import get_db
 from app.models.smtp import SMTPConfig
+from app.models.imap_config import IMAPConfig as IMAPConfigModel
 from app.models.user import User
 from app.schemas.smtp import SMTPConfigCreate, SMTPConfigUpdate, SMTPConfig as SMTPConfigSchema
 
@@ -210,3 +211,143 @@ async def send_reply(
         return {"success": True, "message": f"Reply sent to {to_email}"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to send reply: {str(e)}")
+
+
+# ── IMAP config (saved to DB) ─────────────────────────────────────────────────
+
+class IMAPConfigSchema(BaseModel):
+    host: str
+    port: int = 993
+    username: str
+    password: str = ""
+    
+    class Config:
+        str_strip_whitespace = True
+        
+    def validate_host(self):
+        """Validate host format"""
+        if not self.host or len(self.host) > 255:
+            raise ValueError("Invalid host")
+        return self
+    
+    def validate_port(self):
+        """Validate port range"""
+        if not 1 <= self.port <= 65535:
+            raise ValueError("Port must be between 1 and 65535")
+        return self
+
+
+@router.get("/imap")
+async def get_imap_config(
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(deps.get_current_user),
+):
+    result = await db.execute(select(IMAPConfigModel).filter(IMAPConfigModel.user_id == current_user.id))
+    cfg = result.scalars().first()
+    if not cfg:
+        raise HTTPException(status_code=404, detail="No IMAP config saved")
+    # Never return the password — frontend will use what's in DB directly via /imap/creds
+    return {"host": cfg.host, "port": cfg.port, "username": cfg.username, "has_password": True}
+
+
+@router.post("/imap")
+async def save_imap_config(
+    data: IMAPConfigSchema,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(deps.get_current_user),
+):
+    result = await db.execute(select(IMAPConfigModel).filter(IMAPConfigModel.user_id == current_user.id))
+    cfg = result.scalars().first()
+    if cfg:
+        cfg.host = data.host
+        cfg.port = data.port
+        cfg.username = data.username
+        if data.password:
+            cfg.password = data.password
+    else:
+        if not data.password:
+            raise HTTPException(status_code=400, detail="Password is required")
+        cfg = IMAPConfigModel(host=data.host, port=data.port, username=data.username, password=data.password, user_id=current_user.id)
+        db.add(cfg)
+    await db.commit()
+    return {"success": True, "message": "IMAP configuration saved"}
+
+
+@router.post("/imap/test")
+async def test_imap_config(
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(deps.get_current_user),
+):
+    """Test the saved IMAP configuration."""
+    result = await db.execute(select(IMAPConfigModel).filter(IMAPConfigModel.user_id == current_user.id))
+    cfg = result.scalars().first()
+    if not cfg:
+        raise HTTPException(status_code=404, detail="No IMAP config saved. Save it first.")
+
+    import imaplib, ssl, asyncio
+    
+    def _test_connection():
+        ctx = ssl.create_default_context()
+        ctx.check_hostname = False
+        ctx.verify_mode = ssl.CERT_NONE
+        mail = imaplib.IMAP4_SSL(cfg.host, cfg.port, ssl_context=ctx, timeout=10)
+        mail.login(cfg.username, cfg.password.replace(" ", ""))
+        mail.logout()
+        return True
+    
+    try:
+        loop = asyncio.get_event_loop()
+        await loop.run_in_executor(None, _test_connection)
+        return {"success": True, "message": f"✅ Connected to {cfg.host}:{cfg.port} successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"IMAP connection failed: {str(e)}")
+
+
+@router.get("/imap/creds")
+async def get_imap_creds(
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(deps.get_current_user),
+):
+    """Return full IMAP credentials for use by the mail client (authenticated endpoint)."""
+    result = await db.execute(select(IMAPConfigModel).filter(IMAPConfigModel.user_id == current_user.id))
+    cfg = result.scalars().first()
+    if not cfg:
+        raise HTTPException(status_code=404, detail="No IMAP config saved")
+    return {"host": cfg.host, "port": cfg.port, "username": cfg.username, "password": cfg.password}
+
+
+@router.get("/health")
+async def health_check(
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(deps.get_current_user),
+):
+    """Health check endpoint - verify SMTP and IMAP configurations exist and are valid."""
+    health = {
+        "smtp": {"configured": False, "valid": False},
+        "imap": {"configured": False, "valid": False},
+    }
+    
+    # Check SMTP
+    try:
+        result = await db.execute(select(SMTPConfig).filter(SMTPConfig.user_id == current_user.id))
+        smtp = result.scalars().first()
+        if smtp:
+            health["smtp"]["configured"] = True
+            # Basic validation
+            if smtp.host and smtp.port and smtp.username and smtp.password and smtp.from_email:
+                health["smtp"]["valid"] = True
+    except Exception:
+        pass
+    
+    # Check IMAP
+    try:
+        result = await db.execute(select(IMAPConfigModel).filter(IMAPConfigModel.user_id == current_user.id))
+        imap = result.scalars().first()
+        if imap:
+            health["imap"]["configured"] = True
+            if imap.host and imap.port and imap.username and imap.password:
+                health["imap"]["valid"] = True
+    except Exception:
+        pass
+    
+    return health

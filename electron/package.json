@@ -1,44 +1,35 @@
 {
   "name": "novamailer-desktop",
-  "version": "1.0.0",
-  "description": "NovaMailer Desktop Application",
+  "version": "2.0.0",
+  "description": "NovaMailer — Email Campaign Manager",
   "main": "main.js",
   "author": "NovaMailer Team",
   "license": "MIT",
   "scripts": {
     "start": "electron .",
     "dev": "NODE_ENV=development electron .",
-    "build": "electron-builder",
-    "build:mac": "electron-builder --mac",
-    "build:win": "electron-builder --win",
-    "build:linux": "electron-builder --linux"
+    "build": "electron-builder --publish never",
+    "build:mac": "electron-builder --mac --publish never",
+    "build:mac:all": "electron-builder --mac --x64 --arm64 --publish never",
+    "build:win": "electron-builder --win --publish never",
+    "build:linux": "electron-builder --linux --publish never",
+    "build:all": "electron-builder --mac --win --linux --publish never"
   },
   "build": {
     "appId": "com.novamailer.app",
     "productName": "NovaMailer",
+    "copyright": "Copyright © 2025 NovaMailer Team",
+    "icon": "icon.png",
     "directories": {
-      "output": "dist"
+      "output": "dist",
+      "buildResources": "."
     },
     "files": [
       "main.js",
-      "preload.js"
+      "preload.js",
+      "icon.png"
     ],
     "extraResources": [
-      {
-        "from": "../backend",
-        "to": "backend",
-        "filter": [
-          "**/*",
-          "!venv/**/*",
-          "!__pycache__/**/*",
-          "!*.pyc",
-          "!.env.production",
-          "!*.log",
-          "!.vercel/**/*",
-          "!api/**/*",
-          "!novamailer.db"
-        ]
-      },
       {
         "from": "../frontend/.next/standalone",
         "to": "frontend",
@@ -46,63 +37,61 @@
       },
       {
         "from": "../frontend/.next/static",
-        "to": "frontend/.next/static"
-      },
-      {
-        "from": "../frontend/public",
-        "to": "frontend/public"
-      },
-      {
-        "from": "../frontend/node_modules",
-        "to": "frontend/node_modules",
+        "to": "frontend/.next/static",
         "filter": ["**/*"]
       },
       {
-        "from": "../frontend/package.json",
-        "to": "frontend/package.json"
+        "from": "../frontend/public",
+        "to": "frontend/public",
+        "filter": ["**/*"]
       }
     ],
     "mac": {
+      "icon": "icon.png",
       "category": "public.app-category.productivity",
-      "target": [
-        {
-          "target": "dmg",
-          "arch": ["x64"]
-        }
-      ],
       "hardenedRuntime": true,
       "gatekeeperAssess": false,
       "entitlements": "entitlements.mac.plist",
-      "entitlementsInherit": "entitlements.mac.plist"
+      "entitlementsInherit": "entitlements.mac.plist",
+      "target": [
+        { "target": "dmg", "arch": ["x64", "arm64"] }
+      ]
     },
     "dmg": {
+      "icon": "icon.png",
+      "iconSize": 128,
+      "title": "NovaMailer ${version}",
       "contents": [
-        {
-          "x": 130,
-          "y": 220
-        },
-        {
-          "x": 410,
-          "y": 220,
-          "type": "link",
-          "path": "/Applications"
-        }
-      ]
+        { "x": 130, "y": 220 },
+        { "x": 410, "y": 220, "type": "link", "path": "/Applications" }
+      ],
+      "window": { "width": 540, "height": 380 }
     },
     "win": {
       "icon": "icon.png",
       "target": [
-        "nsis",
-        "portable"
+        { "target": "nsis", "arch": ["x64"] },
+        { "target": "portable", "arch": ["x64"] }
       ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "allowElevation": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "NovaMailer",
+      "runAfterFinish": true,
+      "deleteAppDataOnUninstall": false
     },
     "linux": {
       "icon": "icon.png",
       "target": [
-        "AppImage",
-        "deb"
+        { "target": "AppImage", "arch": ["x64"] },
+        { "target": "deb", "arch": ["x64"] }
       ],
-      "category": "Office"
+      "category": "Office",
+      "description": "Email Campaign Manager"
     }
   },
   "dependencies": {

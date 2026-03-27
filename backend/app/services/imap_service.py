@@ -7,9 +7,12 @@ import email as email_lib
 import imaplib
 import re
 import ssl
+import logging
 from email.header import decode_header as _decode_header
 from email.utils import parseaddr, getaddresses
 from typing import Any, Dict, List, Optional, Tuple
+
+logger = logging.getLogger(__name__)
 
 
 # ── helpers ───────────────────────────────────────────────────────────────────
@@ -27,18 +30,58 @@ def _decode(value: Any, fallback_enc: str = "utf-8") -> str:
     return "".join(result)
 
 
-def _connect(host: str, port: int, username: str, password: str) -> imaplib.IMAP4:
-    password = password.replace(" ", "")
+def _connect(host: str, port: int, username: str, password: str, timeout: int = 30, max_retries: int = 3, use_oauth: bool = False) -> imaplib.IMAP4:
+    """
+    Connect to IMAP server with password or OAuth authentication.
+    If use_oauth=True, password should be the XOAUTH2 string.
+    """
     ctx = ssl.create_default_context()
     ctx.check_hostname = False
     ctx.verify_mode = ssl.CERT_NONE
-    try:
-        mail = imaplib.IMAP4_SSL(host, port, ssl_context=ctx)
-    except Exception:
-        mail = imaplib.IMAP4(host, port)
-        mail.starttls(ssl_context=ctx)
-    mail.login(username, password)
-    return mail
+    
+    last_error = None
+    
+    for attempt in range(max_retries):
+        try:
+            logger.info(f"Connecting to IMAP server {host}:{port} (attempt {attempt + 1}/{max_retries})")
+            
+            try:
+                mail = imaplib.IMAP4_SSL(host, port, ssl_context=ctx, timeout=timeout)
+                logger.info(f"SSL connection established to {host}:{port}")
+            except Exception as e:
+                logger.warning(f"SSL connection failed, trying STARTTLS: {e}")
+                mail = imaplib.IMAP4(host, port)
+                mail.starttls(ssl_context=ctx)
+                logger.info(f"STARTTLS connection established to {host}:{port}")
+            
+            try:
+                if use_oauth:
+                    # OAuth XOAUTH2 authentication
+                    logger.info(f"Authenticating with OAuth for {username}")
+                    auth_string = password  # Already formatted as XOAUTH2
+                    mail.authenticate('XOAUTH2', lambda x: auth_string)
+                else:
+                    # Password authentication
+                    clean_password = password.replace(" ", "")
+                    mail.login(username, clean_password)
+                
+                logger.info(f"Successfully authenticated as {username}")
+                return mail
+            except Exception as e:
+                logger.error(f"Authentication failed for {username}: {e}")
+                raise
+                
+        except Exception as e:
+            last_error = e
+            if attempt < max_retries - 1:
+                import time
+                wait_time = 2 ** attempt  # Exponential backoff: 1s, 2s, 4s
+                logger.warning(f"Connection attempt {attempt + 1} failed, retrying in {wait_time}s...")
+                time.sleep(wait_time)
+            else:
+                logger.error(f"All {max_retries} connection attempts failed")
+    
+    raise last_error or Exception("Connection failed")
 
 
 def _get_body_and_attachments(msg) -> Tuple[str, str, List[Dict]]:

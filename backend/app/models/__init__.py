@@ -9,8 +9,10 @@ from app.models.email_tracking import EmailTracking
 from app.models.webhook import Webhook
 from app.models.unsubscribe import Unsubscribe
 from app.models.recipient_list import RecipientList, RecipientContact
+from app.models.imap_config import IMAPConfig
 
 __all__ = [
     "User", "SMTPConfig", "Campaign", "Template", "Recipient", "OTP",
-    "EmailTracking", "Webhook", "Unsubscribe", "RecipientList", "RecipientContact"
+    "EmailTracking", "Webhook", "Unsubscribe", "RecipientList", "RecipientContact",
+    "IMAPConfig"
 ]

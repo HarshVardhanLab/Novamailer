@@ -4,25 +4,24 @@ from app.core.database import Base
 from app.core.security import encrypt_password, decrypt_password
 from datetime import datetime
 
-class SMTPConfig(Base):
-    __tablename__ = "smtp_configs"
+class IMAPConfig(Base):
+    __tablename__ = "imap_configs"
 
     id = Column(Integer, primary_key=True, index=True)
     host = Column(String(255), nullable=False)
-    port = Column(Integer, nullable=False)
+    port = Column(Integer, nullable=False, default=993)
     username = Column(String(255), nullable=False)
     _password = Column("password", String(512), nullable=False)
-    from_email = Column(String(255), nullable=False)
-    
-    # OAuth fields
+
+    # OAuth fields (shared with SMTP)
     auth_type = Column(String(50), default="password")  # "password" or "oauth"
     oauth_provider = Column(String(50), nullable=True)  # "google" or "microsoft"
     _oauth_access_token = Column("oauth_access_token", String(2048), nullable=True)
     _oauth_refresh_token = Column("oauth_refresh_token", String(2048), nullable=True)
     oauth_token_expires_at = Column(DateTime, nullable=True)
-    
-    user_id = Column(Integer, ForeignKey("users.id"))
-    user = relationship("User", backref="smtp_config")
+
+    user_id = Column(Integer, ForeignKey("users.id"), unique=True)
+    user = relationship("User", backref="imap_config")
 
     @property
     def password(self) -> str:

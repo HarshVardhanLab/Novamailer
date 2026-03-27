@@ -16,6 +16,13 @@ class Settings(BaseSettings):
     FRONTEND_URL: str = "http://localhost:3000"
     # Gemini API Key
     GEMINI_API_KEY: str | None = None
+    
+    # OAuth Configuration
+    GOOGLE_CLIENT_ID: str | None = None
+    GOOGLE_CLIENT_SECRET: str | None = None
+    MICROSOFT_CLIENT_ID: str | None = None
+    MICROSOFT_CLIENT_SECRET: str | None = None
+    MICROSOFT_TENANT_ID: str = "common"  # Use "common" for multi-tenant
 
     class Config:
         env_file = ".env"

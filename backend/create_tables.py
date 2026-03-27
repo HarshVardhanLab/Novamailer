@@ -1,7 +1,7 @@
 """Create all tables in Supabase database"""
 import asyncio
 from app.core.database import engine, Base
-from app.models import user, otp, smtp, campaign, template, recipient, attachment
+from app.models import user, otp, smtp, campaign, template, recipient, attachment, imap_config
 
 async def create_tables():
     print("Connecting to Supabase...")
