@@ -5,7 +5,7 @@ import bcrypt
 import base64
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2
+from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from app.core.config import settings
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
@@ -35,7 +35,7 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
 
 def _get_encryption_key() -> bytes:
     """Derive a Fernet key from the SECRET_KEY"""
-    kdf = PBKDF2(
+    kdf = PBKDF2HMAC(
         algorithm=hashes.SHA256(),
         length=32,
         salt=b'novamailer_salt_v1',  # Static salt for deterministic key
