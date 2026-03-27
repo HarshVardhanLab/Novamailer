@@ -70,15 +70,18 @@ async def test_smtp_connection(
         tls_context.check_hostname = False
         tls_context.verify_mode = ssl.CERT_NONE
 
-        use_tls = smtp_config.port == 465
-        start_tls = smtp_config.port == 587
+        port = smtp_config.port
+        # Port 465 = implicit TLS (connect already encrypted, no STARTTLS)
+        # Port 587/25 = STARTTLS (plain connect, then upgrade)
+        use_tls = port == 465
+        start_tls = port in (587, 25)
 
         smtp = aiosmtplib.SMTP(
             hostname=smtp_config.host,
-            port=smtp_config.port,
+            port=port,
             use_tls=use_tls,
-            tls_context=tls_context,
-            timeout=10,
+            tls_context=tls_context if use_tls else None,
+            timeout=15,
         )
         await smtp.connect()
         if start_tls:
@@ -86,7 +89,7 @@ async def test_smtp_connection(
         await smtp.login(smtp_config.username, password)
         await smtp.quit()
 
-        return {"success": True, "message": f"Connected to {smtp_config.host}:{smtp_config.port} successfully"}
+        return {"success": True, "message": f"✅ Connected to {smtp_config.host}:{port} successfully"}
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Connection failed: {str(e)}")
 
