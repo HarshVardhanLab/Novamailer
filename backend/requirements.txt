@@ -16,3 +16,4 @@ jinja2
 email-validator
 mangum
 google-genai
+httpx

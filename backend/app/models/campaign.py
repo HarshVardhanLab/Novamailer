@@ -11,7 +11,8 @@ class Campaign(Base):
     subject = Column(String(500), nullable=False)
     body = Column(Text, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
-    status = Column(String(50), default="draft") # draft, sending, completed, failed
-    
+    status = Column(String(50), default="draft")  # draft, scheduled, sending, completed, failed
+    scheduled_at = Column(DateTime, nullable=True)  # for email scheduling
+
     user_id = Column(Integer, ForeignKey("users.id"))
     user = relationship("User", backref="campaigns")

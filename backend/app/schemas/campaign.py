@@ -6,6 +6,7 @@ class CampaignBase(BaseModel):
     name: str
     subject: str
     body: str
+    scheduled_at: Optional[datetime] = None
 
 class CampaignCreate(CampaignBase):
     pass
@@ -30,7 +31,9 @@ class CampaignStats(BaseModel):
     sent: int
     pending: int
     failed: int
-    
+    open_rate: float = 0.0
+    click_rate: float = 0.0
+
 class CampaignDetail(CampaignInDBBase):
     stats: CampaignStats
     recipients: List[Dict[str, Any]] = []

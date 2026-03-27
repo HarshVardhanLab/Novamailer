@@ -41,6 +41,7 @@ const formSchema = z.object({
     name: z.string().min(1, "Name is required"),
     subject: z.string().min(1, "Subject is required"),
     body: z.string().min(1, "Body is required"),
+    scheduled_at: z.string().optional(),
 })
 
 export default function NewCampaignPage() {
@@ -58,6 +59,7 @@ export default function NewCampaignPage() {
             name: "",
             subject: "",
             body: "",
+            scheduled_at: "",
         },
     })
 
@@ -113,9 +115,14 @@ export default function NewCampaignPage() {
     async function onSubmit(values: z.infer<typeof formSchema>) {
         setIsLoading(true)
         try {
-            const res = await api.post("/campaigns", values)
+            const payload: any = { ...values }
+            if (payload.scheduled_at) {
+                payload.scheduled_at = new Date(payload.scheduled_at).toISOString()
+            } else {
+                delete payload.scheduled_at
+            }
+            const res = await api.post("/campaigns", payload)
             toast.success("Campaign created! Now upload recipients.")
-            // Redirect to campaign detail page to upload CSV
             router.push(`/campaigns/${res.data.id}`)
         } catch (error: any) {
             toast.error("Failed to create campaign")
@@ -224,6 +231,20 @@ export default function NewCampaignPage() {
                                 <FormControl>
                                     <Textarea placeholder="<h1>Hello {{name}}</h1>" className="min-h-[200px]" {...field} />
                                 </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="scheduled_at"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Schedule Send (Optional)</FormLabel>
+                                <FormControl>
+                                    <Input type="datetime-local" {...field} />
+                                </FormControl>
+                                <FormDescription>Leave blank to send manually</FormDescription>
                                 <FormMessage />
                             </FormItem>
                         )}

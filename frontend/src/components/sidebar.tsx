@@ -5,12 +5,15 @@ import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { safeLocalStorage } from "@/lib/storage"
-import { LayoutDashboard, Mail, FileText, Settings, LogOut } from "lucide-react"
+import { LayoutDashboard, Mail, FileText, Settings, LogOut, ShieldOff, Webhook, Users } from "lucide-react"
 
 const sidebarItems = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { name: "Campaigns", href: "/campaigns", icon: Mail },
     { name: "Templates", href: "/templates", icon: FileText },
+    { name: "Recipient Lists", href: "/lists", icon: Users },
+    { name: "Suppression List", href: "/unsubscribes", icon: ShieldOff },
+    { name: "Webhooks", href: "/webhooks", icon: Webhook },
     { name: "Settings", href: "/settings", icon: Settings },
 ]
 
@@ -26,8 +29,8 @@ export function Sidebar() {
                 {sidebarItems.map((item) => (
                     <Link key={item.href} href={item.href}>
                         <Button
-                            variant={pathname === item.href ? "secondary" : "ghost"}
-                            className={cn("w-full justify-start", pathname === item.href && "bg-gray-200 dark:bg-gray-700")}
+                            variant={pathname === item.href || pathname.startsWith(item.href + "/") ? "secondary" : "ghost"}
+                            className={cn("w-full justify-start", (pathname === item.href || pathname.startsWith(item.href + "/")) && "bg-gray-200 dark:bg-gray-700")}
                         >
                             <item.icon className="mr-2 h-4 w-4" />
                             {item.name}
