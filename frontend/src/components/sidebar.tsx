@@ -5,11 +5,12 @@ import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { safeLocalStorage } from "@/lib/storage"
-import { LayoutDashboard, Mail, FileText, Settings, LogOut, ShieldOff, Webhook, Users } from "lucide-react"
+import { LayoutDashboard, Mail, FileText, Settings, LogOut, ShieldOff, Webhook, Users, Inbox } from "lucide-react"
 
 const sidebarItems = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { name: "Campaigns", href: "/campaigns", icon: Mail },
+    { name: "Mail", href: "/mail", icon: Inbox },
     { name: "Templates", href: "/templates", icon: FileText },
     { name: "Recipient Lists", href: "/lists", icon: Users },
     { name: "Suppression List", href: "/unsubscribes", icon: ShieldOff },
