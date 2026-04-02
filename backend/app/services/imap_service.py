@@ -30,11 +30,8 @@ def _decode(value: Any, fallback_enc: str = "utf-8") -> str:
     return "".join(result)
 
 
-def _connect(host: str, port: int, username: str, password: str, timeout: int = 30, max_retries: int = 3, use_oauth: bool = False) -> imaplib.IMAP4:
-    """
-    Connect to IMAP server with password or OAuth authentication.
-    If use_oauth=True, password should be the XOAUTH2 string.
-    """
+def _connect(host: str, port: int, username: str, password: str, timeout: int = 30, max_retries: int = 3) -> imaplib.IMAP4:
+    """Connect to IMAP server with password authentication."""
     ctx = ssl.create_default_context()
     ctx.check_hostname = False
     ctx.verify_mode = ssl.CERT_NONE
@@ -55,16 +52,8 @@ def _connect(host: str, port: int, username: str, password: str, timeout: int = 
                 logger.info(f"STARTTLS connection established to {host}:{port}")
             
             try:
-                if use_oauth:
-                    # OAuth XOAUTH2 authentication
-                    logger.info(f"Authenticating with OAuth for {username}")
-                    auth_string = password  # Already formatted as XOAUTH2
-                    mail.authenticate('XOAUTH2', lambda x: auth_string)
-                else:
-                    # Password authentication
-                    clean_password = password.replace(" ", "")
-                    mail.login(username, clean_password)
-                
+                clean_password = password.replace(" ", "")
+                mail.login(username, clean_password)
                 logger.info(f"Successfully authenticated as {username}")
                 return mail
             except Exception as e:

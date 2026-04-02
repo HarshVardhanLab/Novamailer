@@ -1,18 +1,26 @@
 import os
 import re
-from google import genai
+try:
+    from google import genai
+    GENAI_AVAILABLE = True
+except ImportError:
+    GENAI_AVAILABLE = False
+    genai = None
+
 from typing import Optional, Dict
 from app.core.config import settings
 
 class AIService:
     def __init__(self):
         self.api_key = settings.GEMINI_API_KEY
-        if self.api_key:
+        if self.api_key and GENAI_AVAILABLE:
             self.client = genai.Client(api_key=self.api_key)
         else:
             self.client = None
 
     def _check_configured(self):
+        if not GENAI_AVAILABLE:
+            raise ValueError("Google Generative AI library is not installed. Install with: pip install google-generativeai")
         if not self.client:
             raise ValueError("GEMINI_API_KEY is not configured in the environment variables.")
 

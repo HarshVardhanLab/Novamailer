@@ -287,6 +287,7 @@ async def send_mail(
     msg.attach(MIMEText(req.body, "html"))
 
     try:
+        password = smtp_config.password.replace(" ", "")
         tls_ctx = ssl.create_default_context()
         tls_ctx.check_hostname = False
         tls_ctx.verify_mode = ssl.CERT_NONE
@@ -306,31 +307,7 @@ async def send_mail(
         await smtp.connect()
         if start_tls:
             await smtp.starttls(tls_context=tls_ctx)
-        
-        # Handle OAuth vs password authentication
-        if smtp_config.auth_type == "oauth":
-            from app.services import oauth_service
-            # Ensure token is valid
-            access_token, new_expires = await oauth_service.ensure_valid_token(
-                smtp_config.oauth_provider,
-                smtp_config.oauth_access_token,
-                smtp_config.oauth_refresh_token,
-                smtp_config.oauth_token_expires_at
-            )
-            # Update token if refreshed
-            if new_expires != smtp_config.oauth_token_expires_at:
-                smtp_config.oauth_access_token = access_token
-                smtp_config.oauth_token_expires_at = new_expires
-                await db.commit()
-            
-            # Use XOAUTH2 authentication
-            xoauth2_string = oauth_service.generate_xoauth2_string(smtp_config.username, access_token)
-            await smtp.execute_command(b"AUTH", b"XOAUTH2", xoauth2_string.encode())
-        else:
-            # Use password authentication
-            password = smtp_config.password.replace(" ", "")
-            await smtp.login(smtp_config.username, password)
-        
+        await smtp.login(smtp_config.username, password)
         await smtp.sendmail(smtp_config.from_email, all_recipients, msg.as_string())
         await smtp.quit()
 

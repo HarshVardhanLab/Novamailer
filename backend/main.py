@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from mangum import Mangum
 
 from app.routers import auth, campaigns, templates, smtp, uploads, stats
-from app.routers import tracking, unsubscribe, webhooks, recipient_lists, mail, oauth
+from app.routers import tracking, unsubscribe, webhooks, recipient_lists, mail
 from app.core.config import settings
 from app.core.database import engine, Base, AsyncSessionLocal
 
@@ -70,7 +70,6 @@ app.include_router(unsubscribe.router, prefix=f"{settings.API_V1_STR}/unsubscrib
 app.include_router(webhooks.router, prefix=f"{settings.API_V1_STR}/webhooks", tags=["webhooks"])
 app.include_router(recipient_lists.router, prefix=f"{settings.API_V1_STR}/lists", tags=["recipient-lists"])
 app.include_router(mail.router, prefix=f"{settings.API_V1_STR}/mail", tags=["mail"])
-app.include_router(oauth.router, prefix=f"{settings.API_V1_STR}/oauth", tags=["oauth"])
 
 
 @app.get("/")
